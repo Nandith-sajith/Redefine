@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redefine — Customer App</title>
+<style>
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/500.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/700.css');
+
+:root {
+  --teal: #0E6D55;
+  --teal-deep: #0A5746;
+  --teal-tint: #E0F2EC;
+  --lime: #C8EE3A;
+  --page: #FAF8F2;
+  --paper: #EFEBE0;
+  --surface: #FBFAF7;
+  --ink: #1A1A1A;
+  --ink-muted: #777;
+  --ink-soft: #999;
+  --border: #E5E2D9;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.brand-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 248, 242, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-mark {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: -0.3px;
+}
+
+.brand-mark .dot {
+  color: var(--lime);
+  display: inline-block;
+  margin-left: 1px;
+}
+
+.brand-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 96px 32px 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+  margin: 0 0 22px;
+  color: var(--ink);
+}
+
+.hero h1 .accent {
+  color: var(--teal);
+  position: relative;
+}
+
+.hero h1 .accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 8px;
+  background: var(--lime);
+  z-index: -1;
+  border-radius: 2px;
+}
+
+.hero p {
+  font-size: 16px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.65;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.toc {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 32px 80px;
+}
+
+.toc a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  background: #FFF;
+  transition: all 0.15s ease;
+}
+
+.toc a:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.toc a span.num {
+  font-size: 10px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.phase {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 56px;
+  padding-bottom: 22px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.phase-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+.phase-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.phase-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 64px 36px;
+  justify-items: center;
+}
+
+.screen-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.caption {
+  margin-bottom: 22px;
+  padding: 0 4px;
+}
+
+.caption .step {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.caption h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.caption p {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.phone-bezel {
+  background: var(--paper);
+  border-radius: 28px;
+  padding: 14px;
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.phone-screen {
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+}
+
+.phone-screen.tall {
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  text-align: center;
+  padding: 64px 32px 80px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  border-top: 0.5px solid var(--border);
+  margin-top: 40px;
+  background: #FFF;
+}
+
+footer .footer-brand {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 60px 22px 32px; }
+  .hero h1 { font-size: 34px; }
+  .phase { padding: 0 22px 60px; }
+  .phase-header { gap: 12px; margin-bottom: 40px; }
+  .phase-title { font-size: 22px; }
+  .grid { gap: 52px 24px; }
+  .toc { padding: 0 22px 60px; }
+}
+</style>
+</head>
+<body>
+
+<header class="brand-bar">
+  <div class="brand-mark">redefine<span class="dot">.</span></div>
+  <div class="brand-meta">Customer app · v3 · May 2026</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">CUSTOMER APP WALKTHROUGH</div>
+  <h1>Eight screens.<br>One <span class="accent">tab per property</span>.</h1>
+  <p>Everything a customer needs lives inside the property tab — onboarding, the quote, the schedule, the photos. No drawers, no settings tabs, no losing your place.</p>
+</section>
+
+<nav class="toc">
+  <a href="#s1"><span class="num">01</span>Empty</a>
+  <a href="#s2"><span class="num">02</span>Picker</a>
+  <a href="#s3"><span class="num">03</span>Quote form</a>
+  <a href="#s4"><span class="num">04</span>Waiting</a>
+  <a href="#s5"><span class="num">05</span>Quote ready</a>
+  <a href="#s6"><span class="num">06</span>Timeline</a>
+  <a href="#s7"><span class="num">07</span>Photo</a>
+  <a href="#s8"><span class="num">08</span>Skip / pause</a>
+</nav>
+
+<section class="phase">
+  <div class="phase-header">
+    <span class="phase-num">PHASE 01</span>
+    <h2 class="phase-title">Onboarding &amp; quote</h2>
+    <span class="phase-count">5 screens</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="screen-card" id="s1">
+      <div class="caption">
+        <div class="step">STEP 01</div>
+        <h2>Empty state</h2>
+        <p>Sarah just signed up. Only the dashed + Add property tab is visible, and the body invites her to use it.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen tall">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 12px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: transparent; border: 1.5px dashed #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: #E0F2EC; display: flex; align-items: center; justify-content: center;">
+                <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 3 V15 M3 9 H15" stroke="#0E6D55" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 6px 22px 0;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 11 V3 M7 3 L4 6 M7 3 L10 6" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Tap up here to get started</span>
+            </div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 32px 40px; text-align: center;">
+            <svg width="160" height="120" viewBox="0 0 160 120" style="margin-bottom: 26px;">
+              <ellipse cx="80" cy="98" rx="62" ry="13" fill="#A8CC8C" opacity="0.6"/>
+              <ellipse cx="80" cy="95" rx="62" ry="13" fill="#8FB871" opacity="0.7"/>
+              <g stroke="#FFF" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.55">
+                <path d="M30 96 L29 89"/><path d="M30 96 L31 88"/>
+                <path d="M50 100 L49 93"/><path d="M50 100 L51 92"/>
+                <path d="M105 99 L104 92"/><path d="M105 99 L106 91"/>
+                <path d="M125 96 L124 89"/><path d="M125 96 L126 88"/>
+                <path d="M138 99 L137 92"/><path d="M138 99 L139 91"/>
+              </g>
+              <g fill="none" stroke="#0E6D55" stroke-width="1.4" stroke-dasharray="3 3" stroke-linejoin="round">
+                <polygon points="48,82 80,92 80,52 48,42"/>
+                <polygon points="80,92 112,82 112,42 80,52"/>
+                <polygon points="48,42 80,52 80,30 48,20"/>
+                <polygon points="80,52 112,42 112,20 80,30"/>
+                <polygon points="48,42 80,30 112,42 80,46"/>
+              </g>
+            </svg>
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 8px; color: #1A1A1A; letter-spacing: -0.4px;">Add your first property</h2>
+            <p style="font-size: 14px; color: #777; margin: 0; line-height: 1.5; max-width: 240px;">Tap the <span style="color: #0A5746; font-weight: 600;">+ Add property</span> tab above to set up your first lawn. We'll take it from there.</p>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s2">
+      <div class="caption">
+        <div class="step">STEP 02</div>
+        <h2>Property picker</h2>
+        <p>Nine isometric Canadian-house illustrations. Purely aesthetic — they help her tell properties apart at a glance later.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 4px; flex-shrink: 0; gap: 8px;">
+              <svg width="44" height="36" viewBox="0 0 44 36">
+                <path d="M6 22 L6 30 L38 30 L38 22 L22 8 L6 22 Z" fill="none" stroke="#0E6D55" stroke-width="1.2" stroke-dasharray="2 2" stroke-linejoin="round"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Setting up…</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <span style="font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Step 1 of 3</span>
+            <h2 style="font-size: 24px; font-weight: 700; margin: 6px 0 6px; color: #1A1A1A; line-height: 1.2; letter-spacing: -0.4px;">Pick an illustration</h2>
+            <p style="font-size: 13px; color: #777; margin: 0 0 18px; line-height: 1.5; font-weight: 400;">It helps you spot this property at a glance.</p>
+          </div>
+          <div style="padding: 0 18px 22px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="80" rx="40" ry="9" fill="#A8CC8C"/><ellipse cx="50" cy="78" rx="40" ry="9" fill="#8FB871"/>
+                  <polygon points="22,68 50,77 50,55 22,46" fill="#F0E6D0"/><polygon points="50,77 78,68 78,46 50,55" fill="#D9CCB1"/>
+                  <polygon points="22,46 50,55 50,40 22,31" fill="#3F3F3F"/><polygon points="50,55 78,46 78,31 50,40" fill="#2A2A2A"/>
+                  <polygon points="22,46 50,40 78,46 50,52" fill="#1F1F1F"/>
+                  <rect x="32" y="59" width="6" height="9" fill="#5A4A30"/><rect x="42" y="60" width="5" height="5" fill="#9CC4D9"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #E0F2EC; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid #0E6D55; position: relative;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="82" rx="42" ry="10" fill="#A8CC8C"/><ellipse cx="50" cy="80" rx="42" ry="10" fill="#8FB871"/>
+                  <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                  <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                  <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/>
+                  <rect x="29" y="48" width="5" height="5" fill="#9CC4D9"/><rect x="40" y="50" width="5" height="5" fill="#9CC4D9"/>
+                  <rect x="29" y="62" width="5" height="5" fill="#9CC4D9"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+                </svg>
+                <div style="position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; background: #C8EE3A; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <svg width="11" height="11" viewBox="0 0 11 11"><path d="M2.5 5.5 L4.5 7.5 L8.5 3.5" fill="none" stroke="#1A1A1A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="83" rx="32" ry="7" fill="#A8CC8C"/><ellipse cx="50" cy="81" rx="32" ry="7" fill="#8FB871"/>
+                  <polygon points="28,72 50,79 50,55 28,48" fill="#FBF7EE"/><polygon points="50,79 72,72 72,48 50,55" fill="#E5DFD2"/>
+                  <polygon points="28,48 50,55 50,28 28,21" fill="#5C7A99"/><polygon points="50,55 72,48 72,21 50,28" fill="#445C75"/>
+                  <polygon points="28,48 50,28 72,48 50,52" fill="#324558"/>
+                  <rect x="58" y="20" width="4" height="14" fill="#888"/>
+                  <rect x="34" y="60" width="5" height="9" fill="#5A4A30"/><rect x="44" y="62" width="5" height="5" fill="#9CC4D9"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="80" rx="40" ry="9" fill="#A8CC8C"/><ellipse cx="50" cy="78" rx="40" ry="9" fill="#8FB871"/>
+                  <polygon points="20,68 50,78 50,52 20,42" fill="#EAEAE6"/><polygon points="50,78 80,68 80,42 50,52" fill="#CFCFCB"/>
+                  <polygon points="20,42 50,52 80,42 50,32" fill="#9C9C99"/>
+                  <rect x="28" y="55" width="14" height="14" fill="#3A4A4F"/><rect x="48" y="58" width="5" height="11" fill="#5A4A30"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="84" rx="46" ry="11" fill="#A8CC8C"/><ellipse cx="50" cy="82" rx="46" ry="11" fill="#8FB871"/>
+                  <polygon points="14,72 50,82 50,62 14,52" fill="#E5D2B0"/><polygon points="50,82 86,72 86,52 50,62" fill="#C9B68F"/>
+                  <polygon points="14,52 50,62 50,46 14,36" fill="#7A4F2E"/><polygon points="50,62 86,52 86,36 50,46" fill="#5E3C22"/>
+                  <polygon points="14,52 50,46 86,52 50,58" fill="#42291A"/>
+                  <rect x="22" y="65" width="5" height="5" fill="#9CC4D9"/><rect x="42" y="68" width="5" height="9" fill="#5A4A30"/>
+                  <rect x="62" y="69" width="5" height="5" fill="#9CC4D9"/><rect x="74" y="70" width="5" height="5" fill="#9CC4D9"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="84" rx="26" ry="6" fill="#A8CC8C"/><ellipse cx="50" cy="82" rx="26" ry="6" fill="#8FB871"/>
+                  <polygon points="32,72 50,79 50,40 32,33" fill="#E8D6BE"/><polygon points="50,79 68,72 68,33 50,40" fill="#CCB89B"/>
+                  <polygon points="32,33 50,40 50,22 32,15" fill="#8A4F3A"/><polygon points="50,40 68,33 68,15 50,22" fill="#6E3D2C"/>
+                  <polygon points="32,33 50,22 68,33 50,36" fill="#4F2A1E"/>
+                  <rect x="37" y="48" width="5" height="5" fill="#9CC4D9"/><rect x="37" y="60" width="5" height="5" fill="#9CC4D9"/>
+                  <rect x="48" y="64" width="5" height="13" fill="#5A4A30"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="83" rx="34" ry="8" fill="#A8CC8C"/><ellipse cx="50" cy="81" rx="34" ry="8" fill="#8FB871"/>
+                  <polygon points="26,73 50,80 50,68 26,60" fill="#F0E6D0"/><polygon points="50,80 74,73 74,60 50,68" fill="#D9CCB1"/>
+                  <polygon points="26,60 50,68 50,18 38,16" fill="#2A5C3A"/><polygon points="50,68 74,60 62,16 50,18" fill="#1E4528"/>
+                  <polygon points="38,16 50,18 62,16 50,14" fill="#13311B"/>
+                  <polygon points="44,55 50,57 50,68 44,66" fill="#5C8F75"/><polygon points="50,57 56,55 56,66 50,68" fill="#447559"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="83" rx="44" ry="11" fill="#A8CC8C"/><ellipse cx="50" cy="81" rx="44" ry="11" fill="#8FB871"/>
+                  <polygon points="16,72 50,82 50,52 16,42" fill="#FBFAF6"/><polygon points="50,82 84,72 84,42 50,52" fill="#E2DDD1"/>
+                  <polygon points="16,42 50,52 50,30 16,20" fill="#882424"/><polygon points="50,52 84,42 84,20 50,30" fill="#6A1818"/>
+                  <polygon points="16,42 50,30 84,42 50,48" fill="#4A0E0E"/>
+                  <rect x="24" y="56" width="5" height="5" fill="#9CC4D9"/><rect x="36" y="58" width="5" height="5" fill="#9CC4D9"/>
+                  <rect x="46" y="62" width="5" height="13" fill="#5A4A30"/>
+                  <rect x="60" y="62" width="5" height="5" fill="#9CC4D9"/><rect x="72" y="63" width="5" height="5" fill="#9CC4D9"/>
+                </svg>
+              </div>
+              <div style="aspect-ratio: 1; background: #F1EFE8; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 0.5px solid #E5E2D9;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <ellipse cx="50" cy="82" rx="38" ry="9" fill="#A8CC8C"/><ellipse cx="50" cy="80" rx="38" ry="9" fill="#8FB871"/>
+                  <polygon points="22,70 50,79 50,38 22,29" fill="#D8C8E0"/><polygon points="50,79 70,72 70,32 50,38" fill="#B9A6C5"/>
+                  <polygon points="22,29 50,38 50,20 22,11" fill="#5A3A8A"/><polygon points="50,38 70,32 70,17 50,20" fill="#43286A"/>
+                  <polygon points="22,29 50,20 70,32 50,33" fill="#2D1A48"/>
+                  <polygon points="70,72 80,68 80,30 70,32" fill="#9D8AAB"/><polygon points="80,30 70,32 75,12" fill="#43286A"/>
+                  <rect x="29" y="48" width="5" height="5" fill="#FFD777"/><rect x="40" y="50" width="5" height="5" fill="#FFD777"/>
+                  <rect x="40" y="62" width="5" height="13" fill="#5A4A30"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 22px;">
+            <button style="width: 100%; background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">Continue</button>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s3">
+      <div class="caption">
+        <div class="step">STEP 03</div>
+        <h2>Quote form</h2>
+        <p>Sarah picks the service she's after — <strong>Lawn care (bi-weekly)</strong> or <strong>Lawn mowing only (one-time)</strong> — then fills the form. Inline content of the property tab, not a modal.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 6px; color: #1A1A1A; line-height: 1.2; letter-spacing: -0.4px;">Tell us about your lawn</h2>
+            <p style="font-size: 13px; color: #777; margin: 0 0 22px; line-height: 1.5; font-weight: 400;">We'll send a crew to take a look and get back to you within 2 business days.</p>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <div style="margin-bottom: 18px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">What service?</label>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #FFF; border: 2px solid #0E6D55; border-radius: 14px;">
+                  <div style="width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #0E6D55; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: #0E6D55;"></div>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Lawn care (bi-weekly)</div>
+                    <div style="font-size: 12px; color: #777; margin-top: 2px;">16-visit seasonal program</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px;">
+                  <div style="width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #D5D2C9; flex-shrink: 0;"></div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Lawn mowing only (one-time)</div>
+                    <div style="font-size: 12px; color: #777; margin-top: 2px;">Single mow, no commitment</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Name</label>
+              <div style="font-size: 15px; color: #1A1A1A; padding: 8px 0; border-bottom: 0.5px solid #E5E2D9; font-weight: 500;">Sarah Mitchell</div>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Email</label>
+              <div style="font-size: 15px; color: #1A1A1A; padding: 8px 0; border-bottom: 0.5px solid #E5E2D9; font-weight: 500;">sarah.m@gmail.com</div>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Phone</label>
+              <div style="font-size: 15px; color: #1A1A1A; padding: 8px 0; border-bottom: 0.5px solid #E5E2D9; font-weight: 500;">(807) 555-0142</div>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Property</label>
+              <div style="font-size: 15px; color: #1A1A1A; padding: 8px 0; font-weight: 500;">Maple Street home</div>
+              <div style="font-size: 13px; color: #777; padding-bottom: 8px; border-bottom: 0.5px solid #E5E2D9;">412 Maple St, Thunder Bay, ON</div>
+            </div>
+            <div style="margin-bottom: 18px;">
+              <label style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Notes for the crew</label>
+              <div style="font-size: 14px; color: #BBB; padding: 12px 14px; margin-top: 6px; background: #F4F2EC; border: 0.5px solid #E5E2D9; border-radius: 14px; min-height: 70px; font-style: italic;">Gates, pets, tricky corners…</div>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 22px;">
+            <button style="width: 100%; background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">Request estimate</button>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s4">
+      <div class="caption">
+        <div class="step">STEP 04</div>
+        <h2>Waiting state</h2>
+        <p>Calm and reassuring. Three-step timeline shows where the request is. No urgency, no busy-ness.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen tall">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #F4F2EC; padding: 5px 12px; border-radius: 999px; margin-bottom: 14px;">
+              <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#777" stroke-width="1.2"/><path d="M5 3 V5 L6.5 6" stroke="#777" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 11px; color: #555; font-weight: 600;">Estimate requested</span>
+            </div>
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 8px; color: #1A1A1A; line-height: 1.2; letter-spacing: -0.4px;">Your quote is on the way</h2>
+            <p style="font-size: 14px; color: #777; margin: 0 0 26px; line-height: 1.5;">A crew will swing by to take a look within 2 business days. We'll send you a notification the moment your quote is ready.</p>
+          </div>
+          <div style="padding: 0 22px 24px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 18px;">
+              <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                  <div style="width: 22px; height: 22px; border-radius: 50%; background: #0E6D55; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg width="11" height="11" viewBox="0 0 11 11"><path d="M2.5 5.5 L4.5 7.5 L8.5 3.5" fill="none" stroke="#FFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div style="width: 1.5px; flex: 1; background: #0E6D55; min-height: 22px;"></div>
+                </div>
+                <div style="flex: 1; padding-bottom: 16px;">
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Request submitted</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Today, 9:38am</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                  <div style="width: 22px; height: 22px; border-radius: 50%; background: #FFF; border: 1.5px solid #0E6D55; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #0E6D55;"></div>
+                  </div>
+                  <div style="width: 1.5px; flex: 1; background: #E5E2D9; min-height: 22px;"></div>
+                </div>
+                <div style="flex: 1; padding-bottom: 16px;">
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">On-site visit &amp; pricing</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Crew + admin meet you, discuss the plan</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <div style="width: 22px; height: 22px; border-radius: 50%; background: #FFF; border: 1.5px solid #D5D2C9; flex-shrink: 0;"></div>
+                </div>
+                <div style="flex: 1; padding-top: 1px;">
+                  <div style="font-size: 14px; font-weight: 600; color: #777;">Quote ready</div>
+                  <div style="font-size: 12px; color: #999; margin-top: 2px;">Soon after</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px; text-align: center;">
+            <span style="font-size: 12px; color: #999;">Need to update something? <span style="color: #0A5746; font-weight: 600;">Edit request</span></span>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: auto auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s5">
+      <div class="caption">
+        <div class="step">STEP 05</div>
+        <h2>Quote received</h2>
+        <p>Two clear options. <strong>Lawn care (bi-weekly)</strong> custom-priced after the on-site visit; <strong>Lawn mowing only (one-time)</strong> as the simple alternative. Both stay until Sarah picks one.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px; position: relative;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+              <div style="position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #C8EE3A; border-radius: 50%; border: 1.5px solid #E0F2EC;"></div>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 0.5px solid #E5E2D9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="28,72 50,79 50,55 28,48" fill="#FBF7EE"/><polygon points="50,79 72,72 72,48 50,55" fill="#E5DFD2"/>
+                <polygon points="28,48 50,55 50,28 28,21" fill="#5C7A99"/><polygon points="50,55 72,48 72,21 50,28" fill="#445C75"/>
+                <polygon points="28,48 50,28 72,48 50,52" fill="#324558"/>
+              </svg>
+              <span style="font-size: 11px; color: #555; font-weight: 600; line-height: 1.1;">Cabin</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #E0F2EC; padding: 5px 12px; border-radius: 999px; margin-bottom: 12px;">
+              <div style="width: 6px; height: 6px; background: #0E6D55; border-radius: 50%;"></div>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Quote ready</span>
+            </div>
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 6px; color: #1A1A1A; line-height: 1.2; letter-spacing: -0.4px;">Pick a plan to get started</h2>
+            <p style="font-size: 13px; color: #777; margin: 0 0 18px; line-height: 1.5; font-weight: 400;">Our crew visited on Apr 28 and put together two options for your lawn.</p>
+          </div>
+          <div style="padding: 0 22px;">
+            <div style="background: #FFF; border: 2px solid #0E6D55; border-radius: 18px; padding: 18px 16px 16px; margin-bottom: 12px; position: relative;">
+              <div style="position: absolute; top: -11px; left: 14px; background: #C8EE3A; color: #1A1A1A; font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.6px;">RECOMMENDED</div>
+              <div style="font-size: 16px; font-weight: 700; color: #1A1A1A; margin-top: 4px;">Lawn care (bi-weekly)</div>
+              <div style="font-size: 12px; color: #777; margin-top: 2px; font-weight: 400;">Custom-priced for your property · 16 visits over the season</div>
+              <div style="display: flex; align-items: baseline; gap: 5px; margin: 14px 0 12px;">
+                <span style="font-size: 28px; font-weight: 700; color: #0E6D55; letter-spacing: -0.5px;">$52</span>
+                <span style="font-size: 13px; color: #777;">/ visit</span>
+              </div>
+              <div style="background: #F2F8F5; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #555;">
+                  <span>Billed bi-weekly</span><span style="color: #1A1A1A; font-weight: 600;">$52 every 2 weeks</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-top: 4px;">
+                  <span>Program length</span><span style="color: #1A1A1A; font-weight: 600;">16 visits · ~8 months</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button style="flex: 1; background: transparent; color: #888; border: 0.5px solid #D5D2C9; border-radius: 999px; padding: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Decline</button>
+                <button style="flex: 2; background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Accept &amp; pay</button>
+              </div>
+            </div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 16px; margin-bottom: 22px;">
+              <div style="font-size: 16px; font-weight: 700; color: #1A1A1A;">Lawn mowing only (one-time)</div>
+              <div style="font-size: 12px; color: #777; margin-top: 2px;">Single mow, no commitment</div>
+              <div style="display: flex; align-items: baseline; gap: 5px; margin: 14px 0 14px;">
+                <span style="font-size: 28px; font-weight: 700; color: #0E6D55; letter-spacing: -0.5px;">$85</span>
+                <span style="font-size: 13px; color: #777;">one time</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button style="flex: 1; background: transparent; color: #888; border: 0.5px solid #D5D2C9; border-radius: 999px; padding: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Decline</button>
+                <button style="flex: 2; background: transparent; color: #1A1A1A; border: 1px solid #1A1A1A; border-radius: 999px; padding: 12px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Accept &amp; pay</button>
+              </div>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 6px auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="phase">
+  <div class="phase-header">
+    <span class="phase-num">PHASE 02</span>
+    <h2 class="phase-title">Living with the service</h2>
+    <span class="phase-count">3 screens</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="screen-card" id="s6">
+      <div class="caption">
+        <div class="step">STEP 06</div>
+        <h2>Active subscription timeline</h2>
+        <p>Next visit gets the spotlight on a teal card with subtle mowing-stripe texture. Past visits below with after-photo thumbnails.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 0.5px solid #E5E2D9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="28,72 50,79 50,55 28,48" fill="#FBF7EE"/><polygon points="50,79 72,72 72,48 50,55" fill="#E5DFD2"/>
+                <polygon points="28,48 50,55 50,28 28,21" fill="#5C7A99"/><polygon points="50,55 72,48 72,21 50,28" fill="#445C75"/>
+                <polygon points="28,48 50,28 72,48 50,52" fill="#324558"/>
+              </svg>
+              <span style="font-size: 11px; color: #555; font-weight: 600; line-height: 1.1;">Cabin</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <div style="font-size: 11px; color: #777; margin-bottom: 4px; font-weight: 500;">412 Maple St · Visit 4 of 16 · Lawn care (bi-weekly)</div>
+          </div>
+          <div style="padding: 10px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Up next</span>
+          </div>
+          <div style="padding: 0 22px;">
+            <div style="background: #0A5746; background-image: repeating-linear-gradient(42deg, transparent 0, transparent 14px, rgba(255,255,255,0.045) 14px, rgba(255,255,255,0.045) 28px); color: #FFF; border-radius: 18px; padding: 18px; margin-bottom: 10px; position: relative; overflow: hidden;">
+              <svg style="position: absolute; bottom: 6px; right: 10px; width: 100px; height: 28px; opacity: 0.22; pointer-events: none;" viewBox="0 0 100 28">
+                <g stroke="#FFF" stroke-width="0.7" stroke-linecap="round" fill="none">
+                  <path d="M8 24 L7 16"/><path d="M8 24 L9 15"/><path d="M8 24 L11 17"/>
+                  <path d="M22 26 L21 18"/><path d="M22 26 L23 17"/><path d="M22 26 L25 19"/>
+                  <path d="M38 23 L37 15"/><path d="M38 23 L39 14"/><path d="M38 23 L41 16"/>
+                  <path d="M52 25 L51 17"/><path d="M52 25 L53 16"/><path d="M52 25 L55 18"/>
+                  <path d="M68 24 L67 16"/><path d="M68 24 L69 15"/><path d="M68 24 L71 17"/>
+                  <path d="M82 26 L81 18"/><path d="M82 26 L83 17"/><path d="M82 26 L85 19"/>
+                  <path d="M93 23 L92 16"/><path d="M93 23 L94 15"/><path d="M93 23 L96 17"/>
+                </g>
+              </svg>
+              <svg style="position: absolute; top: 12px; right: 14px; width: 30px; height: 18px; opacity: 0.18; pointer-events: none;" viewBox="0 0 30 18">
+                <g stroke="#FFF" stroke-width="0.7" stroke-linecap="round" fill="none">
+                  <path d="M6 16 L5 9"/><path d="M6 16 L7 8"/><path d="M6 16 L9 10"/>
+                  <path d="M22 15 L21 8"/><path d="M22 15 L23 7"/><path d="M22 15 L25 9"/>
+                </g>
+              </svg>
+              <div style="position: relative;">
+                <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 12px; opacity: 0.8; font-weight: 500;">Wednesday</span>
+                  <span style="font-size: 12px; opacity: 0.8;">·</span>
+                  <span style="font-size: 12px; opacity: 0.8; font-weight: 500;">in 3 days</span>
+                </div>
+                <div style="font-size: 28px; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.5px;">May 6</div>
+                <div style="display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 0.5px solid rgba(255,255,255,0.22);">
+                  <div style="width: 22px; height: 22px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">MJ</div>
+                  <span style="font-size: 12px; opacity: 0.92;">Marcus &amp; Jordan, 8–10am window</span>
+                </div>
+              </div>
+            </div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 14px 16px; margin-bottom: 22px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 12px; color: #777; margin-bottom: 2px;">Wednesday · in 17 days</div>
+                  <div style="font-size: 17px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">May 20</div>
+                </div>
+                <div style="font-size: 11px; color: #888; padding: 5px 10px; background: #F4F2EC; border-radius: 999px; font-weight: 600;">Crew TBD</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Completed</span>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <div style="display: flex; gap: 12px; padding: 10px 0;">
+              <div style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                <svg viewBox="0 0 56 56" width="56" height="56">
+                  <rect width="56" height="56" fill="#5C8E45"/>
+                  <line x1="0" y1="14" x2="56" y2="14" stroke="#4F7C3B" stroke-width="2"/>
+                  <line x1="0" y1="28" x2="56" y2="28" stroke="#6FA055" stroke-width="2"/>
+                  <line x1="0" y1="42" x2="56" y2="42" stroke="#4F7C3B" stroke-width="2"/>
+                </svg>
+              </div>
+              <div style="flex: 1; padding-top: 2px;">
+                <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Apr 22</div>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">Marcus &amp; Tasha · 47 min</div>
+              </div>
+              <div style="display: flex; align-items: center;">
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div style="height: 0.5px; background: #EFEDE5;"></div>
+            <div style="display: flex; gap: 12px; padding: 10px 0;">
+              <div style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                <svg viewBox="0 0 56 56" width="56" height="56">
+                  <rect width="56" height="56" fill="#6BA052"/>
+                  <line x1="0" y1="18" x2="56" y2="18" stroke="#578841" stroke-width="2"/>
+                  <line x1="0" y1="36" x2="56" y2="36" stroke="#7DB565" stroke-width="2"/>
+                </svg>
+              </div>
+              <div style="flex: 1; padding-top: 2px;">
+                <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Apr 8</div>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">Marcus &amp; Tasha · 52 min</div>
+              </div>
+              <div style="display: flex; align-items: center;">
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div style="height: 0.5px; background: #EFEDE5;"></div>
+            <div style="display: flex; gap: 12px; padding: 10px 0;">
+              <div style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                <svg viewBox="0 0 56 56" width="56" height="56">
+                  <rect width="56" height="56" fill="#5F9648"/>
+                  <line x1="0" y1="22" x2="56" y2="22" stroke="#4D7C3A" stroke-width="2"/>
+                </svg>
+              </div>
+              <div style="flex: 1; padding-top: 2px;">
+                <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Mar 25</div>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">Jordan &amp; Pete · 58 min</div>
+              </div>
+              <div style="display: flex; align-items: center;">
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 18px; border-top: 0.5px solid #EFEDE5;">
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+              <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">All photos</span>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="height: 0.5px; background: #EFEDE5;"></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+              <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">Billing &amp; receipts</span>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="height: 0.5px; background: #EFEDE5;"></div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+              <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">Skip or pause visits</span>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#BBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 6px auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s7">
+      <div class="caption">
+        <div class="step">STEP 07</div>
+        <h2>Photo detail</h2>
+        <p>Drilled in from the timeline. Before/after side-by-side with overlay labels, plus visit summary and a crew note.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 0.5px solid #E5E2D9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="28,72 50,79 50,55 28,48" fill="#FBF7EE"/><polygon points="50,79 72,72 72,48 50,55" fill="#E5DFD2"/>
+                <polygon points="28,48 50,55 50,28 28,21" fill="#5C7A99"/><polygon points="50,55 72,48 72,21 50,28" fill="#445C75"/>
+                <polygon points="28,48 50,28 72,48 50,52" fill="#324558"/>
+              </svg>
+              <span style="font-size: 11px; color: #555; font-weight: 600; line-height: 1.1;">Cabin</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 10px; display: flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size: 13px; color: #555; font-weight: 500;">Back to timeline</span>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 4px; color: #1A1A1A; letter-spacing: -0.4px;">Apr 22 visit</h2>
+            <p style="font-size: 13px; color: #777; margin: 0 0 18px;">Tuesday · 11 days ago</p>
+          </div>
+          <div style="padding: 0 22px 16px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div style="position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;">
+                  <rect width="100" height="100" fill="#728E48"/>
+                  <ellipse cx="22" cy="38" rx="20" ry="11" fill="#5C7838" opacity="0.55"/>
+                  <ellipse cx="72" cy="65" rx="22" ry="12" fill="#5C7838" opacity="0.45"/>
+                  <ellipse cx="55" cy="22" rx="9" ry="5" fill="#B5A552" opacity="0.42"/>
+                  <ellipse cx="80" cy="30" rx="6" ry="4" fill="#A89A4A" opacity="0.38"/>
+                  <g stroke="#EDE7B8" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.7">
+                    <path d="M5 95 L4 86"/><path d="M5 95 L6 85"/><path d="M5 95 L7 87"/>
+                    <path d="M14 92 L13 84"/><path d="M14 92 L15 83"/><path d="M14 92 L16 85"/>
+                    <path d="M22 96 L21 88"/><path d="M22 96 L23 87"/><path d="M22 96 L24 89"/>
+                    <path d="M32 90 L31 82"/><path d="M32 90 L33 81"/><path d="M32 90 L34 83"/>
+                    <path d="M42 94 L41 86"/><path d="M42 94 L43 85"/>
+                    <path d="M52 88 L51 80"/><path d="M52 88 L53 79"/><path d="M52 88 L54 81"/>
+                    <path d="M62 92 L61 84"/><path d="M62 92 L63 83"/>
+                    <path d="M72 90 L71 82"/><path d="M72 90 L73 81"/><path d="M72 90 L74 83"/>
+                    <path d="M82 94 L81 86"/><path d="M82 94 L83 85"/><path d="M82 94 L84 87"/>
+                    <path d="M92 91 L91 83"/><path d="M92 91 L93 82"/>
+                    <path d="M9 78 L8 70"/><path d="M9 78 L10 69"/>
+                    <path d="M28 72 L27 64"/><path d="M28 72 L29 63"/>
+                    <path d="M48 76 L47 68"/><path d="M48 76 L49 67"/>
+                    <path d="M68 78 L67 70"/><path d="M68 78 L69 69"/>
+                    <path d="M88 75 L87 67"/><path d="M88 75 L89 66"/>
+                    <path d="M18 60 L17 52"/><path d="M18 60 L19 51"/>
+                    <path d="M38 56 L37 48"/><path d="M38 56 L39 47"/>
+                    <path d="M58 62 L57 54"/><path d="M58 62 L59 53"/>
+                    <path d="M78 58 L77 50"/><path d="M78 58 L79 49"/>
+                    <path d="M28 44 L27 36"/><path d="M28 44 L29 35"/>
+                    <path d="M48 42 L47 34"/><path d="M48 42 L49 33"/>
+                    <path d="M68 46 L67 38"/><path d="M68 46 L69 37"/>
+                    <path d="M88 42 L87 34"/><path d="M88 42 L89 33"/>
+                    <path d="M12 28 L11 20"/><path d="M12 28 L13 19"/>
+                    <path d="M38 24 L37 16"/><path d="M38 24 L39 15"/>
+                    <path d="M62 28 L61 20"/><path d="M62 28 L63 19"/>
+                    <path d="M88 24 L87 16"/><path d="M88 24 L89 15"/>
+                    <path d="M22 12 L21 5"/><path d="M22 12 L23 4"/>
+                    <path d="M48 10 L47 3"/><path d="M48 10 L49 2"/>
+                    <path d="M72 12 L71 5"/><path d="M72 12 L73 4"/>
+                  </g>
+                  <ellipse cx="42" cy="78" rx="3" ry="1.2" fill="#7A5530" opacity="0.7"/>
+                  <ellipse cx="78" cy="48" rx="2.5" ry="1" fill="#7A5530" opacity="0.6"/>
+                </svg>
+                <div style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.55); color: #FFF; padding: 4px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 0.6px;">BEFORE</div>
+              </div>
+              <div style="position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1; background: repeating-linear-gradient(48deg, #5A8B45 0, #5A8B45 14px, #6BA055 14px, #6BA055 28px);">
+                <div style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.55); color: #FFF; padding: 4px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 0.6px;">AFTER</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 14px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                <span style="font-size: 12px; color: #777;">Crew</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <div style="width: 20px; height: 20px; background: #E0F2EC; color: #0A5746; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700;">MT</div>
+                  <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">Marcus &amp; Tasha</span>
+                </div>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5; margin: 6px 0;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                <span style="font-size: 12px; color: #777;">Duration</span>
+                <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">47 minutes</span>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5; margin: 6px 0;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                <span style="font-size: 12px; color: #777;">Visit</span>
+                <span style="font-size: 13px; color: #1A1A1A; font-weight: 500;">3 of 16</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <div style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; margin-bottom: 8px;">Crew note</div>
+            <p style="font-size: 13px; color: #555; line-height: 1.55; margin: 0; font-style: italic;">Front lawn looking great — caught a bit of crabgrass starting near the driveway, will keep an eye on it next visit.</p>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 6px auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s8">
+      <div class="caption">
+        <div class="step">STEP 08</div>
+        <h2>Skip or pause</h2>
+        <p>The 48hr rule made tangible — the closest visit shows a disabled "Within 48 hrs" chip while the rest are skippable.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Sarah!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 0 18px 16px; overflow-x: auto;">
+            <div style="width: 96px; height: 100px; background: #E0F2EC; border: 1.5px solid #0E6D55; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/><polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/><polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/><rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+              </svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600; line-height: 1.1;">Maple St</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 0.5px solid #E5E2D9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 6px; flex-shrink: 0; gap: 4px;">
+              <svg viewBox="0 0 100 100" width="60" height="60">
+                <polygon points="28,72 50,79 50,55 28,48" fill="#FBF7EE"/><polygon points="50,79 72,72 72,48 50,55" fill="#E5DFD2"/>
+                <polygon points="28,48 50,55 50,28 28,21" fill="#5C7A99"/><polygon points="50,55 72,48 72,21 50,28" fill="#445C75"/>
+                <polygon points="28,48 50,28 72,48 50,52" fill="#324558"/>
+              </svg>
+              <span style="font-size: 11px; color: #555; font-weight: 600; line-height: 1.1;">Cabin</span>
+            </div>
+            <div style="width: 96px; height: 100px; background: transparent; border: 1px dashed #C5C2B9; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #F1EFE8; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 3 V13 M3 8 H13" stroke="#777" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span style="font-size: 11px; color: #888; font-weight: 500;">Add property</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 10px; display: flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size: 13px; color: #555; font-weight: 500;">Back to Maple Street</span>
+          </div>
+          <div style="padding: 4px 22px 4px;">
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 8px; color: #1A1A1A; letter-spacing: -0.4px;">Skip or pause</h2>
+            <p style="font-size: 13px; color: #777; margin: 0 0 18px; line-height: 1.5;">Skip a single visit or pause your whole subscription. Just give us at least <span style="color: #0A5746; font-weight: 600;">48 hours notice</span>.</p>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px;">
+                <div style="flex: 1;">
+                  <div style="font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 4px;">Pause subscription</div>
+                  <div style="font-size: 12px; color: #777; line-height: 1.45;">All upcoming visits will be paused. Resume any time and we'll pick up where we left off.</div>
+                  <div style="font-size: 11px; color: #0A5746; line-height: 1.45; margin-top: 6px; font-weight: 600;">Your bi-weekly billing pauses with the visits.</div>
+                </div>
+                <div style="width: 44px; height: 26px; background: #E5E2D9; border-radius: 999px; position: relative; flex-shrink: 0; margin-top: 2px;">
+                  <div style="position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: #FFF; border-radius: 50%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Skip a visit</span>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 4px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">May 4</div>
+                  <div style="font-size: 12px; color: #999; margin-top: 2px;">Tomorrow · in 16 hours</div>
+                </div>
+                <div style="display: inline-flex; align-items: center; gap: 5px; background: #F4F2EC; padding: 6px 12px; border-radius: 999px;">
+                  <svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="4.5" fill="none" stroke="#999" stroke-width="1"/><path d="M5.5 3 V5.5 L7 7" stroke="#999" stroke-width="1" stroke-linecap="round" fill="none"/></svg>
+                  <span style="font-size: 11px; color: #888; font-weight: 600;">Within 48 hrs</span>
+                </div>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">May 6</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Wednesday · in 3 days</div>
+                </div>
+                <button style="background: transparent; color: #1A1A1A; border: 1px solid #1A1A1A; border-radius: 999px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Skip</button>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">May 20</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Wednesday · in 17 days</div>
+                </div>
+                <button style="background: transparent; color: #1A1A1A; border: 1px solid #1A1A1A; border-radius: 999px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Skip</button>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Jun 3</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Wednesday · in 31 days</div>
+                </div>
+                <button style="background: transparent; color: #1A1A1A; border: 1px solid #1A1A1A; border-radius: 999px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Skip</button>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px; text-align: center;">
+            <span style="font-size: 12px; color: #999;">Need to cancel entirely? <span style="color: #0A5746; font-weight: 600;">Cancel subscription</span></span>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 6px auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">redefine<span style="color: #C8EE3A;">.</span></div>
+  Customer app · v3 design walkthrough · Thunder Bay, ON
+</footer>
+
+</body>
+</html>

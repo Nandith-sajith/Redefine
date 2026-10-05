@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redefine — Crew App</title>
+<style>
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/500.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/700.css');
+
+:root {
+  --teal: #0E6D55;
+  --teal-deep: #0A5746;
+  --teal-tint: #E0F2EC;
+  --lime: #C8EE3A;
+  --page: #FAF8F2;
+  --paper: #EFEBE0;
+  --surface: #FBFAF7;
+  --ink: #1A1A1A;
+  --ink-muted: #777;
+  --ink-soft: #999;
+  --border: #E5E2D9;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.brand-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 248, 242, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-mark {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: -0.3px;
+}
+
+.brand-mark .dot {
+  color: var(--lime);
+  display: inline-block;
+  margin-left: 1px;
+}
+
+.brand-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 96px 32px 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+  margin: 0 0 22px;
+  color: var(--ink);
+}
+
+.hero h1 .accent {
+  color: var(--teal);
+  position: relative;
+}
+
+.hero h1 .accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 8px;
+  background: var(--lime);
+  z-index: -1;
+  border-radius: 2px;
+}
+
+.hero p {
+  font-size: 16px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.65;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.toc {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 32px 80px;
+}
+
+.toc a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  background: #FFF;
+  transition: all 0.15s ease;
+}
+
+.toc a:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.toc a span.num {
+  font-size: 10px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.phase {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 56px;
+  padding-bottom: 22px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.phase-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+.phase-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.phase-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 64px 36px;
+  justify-items: center;
+}
+
+.screen-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+}
+
+.caption {
+  margin-bottom: 22px;
+  padding: 0 4px;
+}
+
+.caption .step {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.caption h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.caption p {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.phone-bezel {
+  background: var(--paper);
+  border-radius: 28px;
+  padding: 14px;
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.phone-screen {
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+}
+
+footer {
+  text-align: center;
+  padding: 64px 32px 80px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  border-top: 0.5px solid var(--border);
+  margin-top: 40px;
+  background: #FFF;
+}
+
+footer .footer-brand {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 60px 22px 32px; }
+  .hero h1 { font-size: 34px; }
+  .phase { padding: 0 22px 60px; }
+  .phase-header { gap: 12px; margin-bottom: 40px; }
+  .phase-title { font-size: 22px; }
+  .grid { gap: 52px 24px; }
+  .toc { padding: 0 22px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Phase icon symbols (referenced via <use href="#ph-..."/>) -->
+<svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+  <defs>
+    <symbol id="ph-raking" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 3 L7.5 7.5"/>
+        <path d="M5 9.5 L11 9.5"/>
+        <path d="M5.5 9.8 V12 M7 9.8 V12 M8.5 9.8 V12 M10 9.8 V12 M11.5 9.8 V12"/>
+      </g>
+    </symbol>
+    <symbol id="ph-leafblow" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 3 C 8 3, 5 5, 5 8.5 C 5 10, 6 11, 7.5 11 C 10.5 11, 12 8, 11 3 Z"/>
+        <path d="M7 9 C 8 8, 9 6.5, 10 5"/>
+        <path d="M2 6 H3.5 M1.5 8.5 H3 M2.5 11 H4"/>
+      </g>
+    </symbol>
+    <symbol id="ph-aeration" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 2.5 V8.5 M7 2.5 V8.5 M10.5 2.5 V8.5"/>
+        <path d="M2 11 L12 11"/>
+        <path d="M3.5 9.5 V11" stroke-dasharray="0.8 1"/>
+        <path d="M7 9.5 V11" stroke-dasharray="0.8 1"/>
+        <path d="M10.5 9.5 V11" stroke-dasharray="0.8 1"/>
+      </g>
+    </symbol>
+    <symbol id="ph-seeding" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 12 V7"/>
+        <path d="M7 7 C 5 7, 4 6, 4 4 C 5.5 4, 7 5, 7 7 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M7 7 C 9 7, 10 6, 10 4 C 8.5 4, 7 5, 7 7 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M2.5 12 H11.5"/>
+      </g>
+    </symbol>
+    <symbol id="ph-fertilizing" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="5" height="6.5" rx="0.8"/>
+        <path d="M5 5 V3.5 H7"/>
+        <path d="M9 5.5 L11 4.5 M9.5 8 L11.5 8 M9 10.5 L11 11.5"/>
+      </g>
+    </symbol>
+    <symbol id="ph-overseeding" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 11.5 V8 M4 8 C 3 8, 2.5 7, 2.5 5.5 C 3.5 5.5, 4 6.5, 4 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M4 8 C 5 8, 5.5 7, 5.5 5.5 C 4.5 5.5, 4 6.5, 4 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M10 11.5 V8 M10 8 C 9 8, 8.5 7, 8.5 5.5 C 9.5 5.5, 10 6.5, 10 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M10 8 C 11 8, 11.5 7, 11.5 5.5 C 10.5 5.5, 10 6.5, 10 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M2 11.5 H12"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="brand-bar">
+  <div class="brand-mark">redefine<span class="dot">.</span></div>
+  <div class="brand-meta">Crew app · v2 · May 2026</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">CREW APP WALKTHROUGH</div>
+  <h1>Claim, work,<br><span class="accent">get paid</span>.</h1>
+  <p>The crew's rhythm in six screens — same brand language as the customer app, applied with restraint. Marcus claims a posted job card from the Pending tab, picks his own day, runs the visit (with the program phase clearly tagged), and watches his bi-weekly total tick up to payout.</p>
+</section>
+
+<nav class="toc">
+  <a href="#s1"><span class="num">01</span>Jobs home</a>
+  <a href="#s2"><span class="num">02</span>Job detail</a>
+  <a href="#s3"><span class="num">03</span>In progress</a>
+  <a href="#s4"><span class="num">04</span>Pay</a>
+  <a href="#s5"><span class="num">05</span>Pending</a>
+  <a href="#s6"><span class="num">06</span>Accept job</a>
+</nav>
+
+<section class="phase">
+  <div class="phase-header">
+    <span class="phase-num">PHASE 01</span>
+    <h2 class="phase-title">On the job</h2>
+    <span class="phase-count">3 screens</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="screen-card" id="s1">
+      <div class="caption">
+        <div class="step">STEP 01</div>
+        <h2>Jobs home</h2>
+        <p>Marcus opens to a list grouped by day. Section totals on the right keep his earnings in view. Bottom tabs: Jobs (active) and Pay.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 4px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 0 22px 6px;">
+            <span style="font-size: 13px; color: #777; font-weight: 500;">Wednesday, May 3</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 18px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Today · 2 jobs</span>
+            <span style="font-size: 13px; color: #0E6D55; font-weight: 700;">$96</span>
+          </div>
+          <div style="padding: 0 22px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700; color: #1A1A1A;">Maple Street home</span>
+                <span style="font-size: 16px; font-weight: 700; color: #0E6D55;">$48</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 12px; color: #777;">412 Maple St</span>
+                <span style="font-size: 12px; color: #777;">8–10am</span>
+              </div>
+            </div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700; color: #1A1A1A;">Birch Lane property</span>
+                <span style="font-size: 16px; font-weight: 700; color: #0E6D55;">$48</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 12px; color: #777;">88 Birch Ln</span>
+                <span style="font-size: 12px; color: #777;">11am–1pm</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 22px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Tomorrow · 3 jobs</span>
+            <span style="font-size: 13px; color: #0E6D55; font-weight: 700;">$156</span>
+          </div>
+          <div style="padding: 0 22px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700; color: #1A1A1A;">Cedar Ave home</span>
+                <span style="font-size: 16px; font-weight: 700; color: #0E6D55;">$52</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 12px; color: #777;">145 Cedar Ave</span>
+                <span style="font-size: 12px; color: #777;">8–10am</span>
+              </div>
+            </div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700; color: #1A1A1A;">Pine Crescent</span>
+                <span style="font-size: 16px; font-weight: 700; color: #0E6D55;">$48</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 12px; color: #777;">23 Pine Cres</span>
+                <span style="font-size: 12px; color: #777;">11am–1pm</span>
+              </div>
+            </div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700; color: #1A1A1A;">Oak Street home</span>
+                <span style="font-size: 16px; font-weight: 700; color: #0E6D55;">$56</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 12px; color: #777;">71 Oak St</span>
+                <span style="font-size: 12px; color: #777;">2–4pm</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 22px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Rest of week · 5 jobs</span>
+            <span style="font-size: 13px; color: #0E6D55; font-weight: 700;">$244</span>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="background: transparent; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 13px; color: #1A1A1A; font-weight: 600;">Fri – Sun</div>
+                <div style="font-size: 12px; color: #777; margin-top: 2px;">5 more jobs scheduled</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M8 6 V3.5 H14 V6" stroke="#0E6D55" stroke-width="1.6" fill="none"/><path d="M3 11 H19" stroke="#0E6D55" stroke-width="1.6"/></svg>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M11 6 V11 L14 13" stroke="#888" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#888" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s2">
+      <div class="caption">
+        <div class="step">STEP 02</div>
+        <h2>Job detail</h2>
+        <p>Tapped Maple Street from the list. The <strong>phase pill</strong> tells Marcus what work to plan for — today it's Aeration, so he packs the right gear. Pay sits next to the property name; customer notes get their own card. Two actions: get directions, or start work.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 4px 22px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size: 13px; color: #555; font-weight: 500;">Back to jobs</span>
+            </div>
+            <span style="font-size: 12px; color: #777; font-weight: 600;">Today · 8–10am</span>
+          </div>
+          <div style="padding: 0 22px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+              <h2 style="font-size: 24px; font-weight: 700; margin: 0; color: #1A1A1A; letter-spacing: -0.5px; line-height: 1.15;">Maple Street home</h2>
+              <span style="font-size: 24px; font-weight: 700; color: #0E6D55; letter-spacing: -0.4px;">$48</span>
+            </div>
+            <span style="font-size: 13px; color: #777; font-weight: 500;">Sarah Mitchell · Visit 1 of 16</span>
+          </div>
+          <div style="padding: 0 22px 14px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #E0F2EC; padding: 5px 12px; border-radius: 999px; color: #0A5746;">
+              <svg width="13" height="13"><use href="#ph-aeration"/></svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 700; letter-spacing: 0.5px;">PHASE · AERATION</span>
+            </div>
+          </div>
+          <div style="padding: 0 22px 12px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 16px; padding: 16px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                <svg width="18" height="18" viewBox="0 0 18 18" style="flex-shrink: 0; margin-top: 2px;"><path d="M9 1.5 C 5.5 1.5 3 4 3 7 C 3 11 9 16 9 16 C 9 16 15 11 15 7 C 15 4 12.5 1.5 9 1.5 Z" fill="none" stroke="#0E6D55" stroke-width="1.4"/><circle cx="9" cy="7" r="2" fill="#0E6D55"/></svg>
+                <div style="flex: 1;">
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A; line-height: 1.3;">412 Maple St</div>
+                  <div style="font-size: 12px; color: #777; margin-top: 2px;">Thunder Bay, ON · 8 min away</div>
+                </div>
+              </div>
+              <button style="width: 100%; background: transparent; color: #1A1A1A; border: 1px solid #1A1A1A; border-radius: 999px; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7 L12 7 M8 3 L12 7 L8 11" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                Get directions
+              </button>
+            </div>
+          </div>
+          <div style="padding: 0 22px 24px;">
+            <div style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; margin-bottom: 8px;">Notes from Sarah</div>
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 16px;">
+              <p style="font-size: 13px; color: #444; line-height: 1.55; margin: 0; font-style: italic;">Gate code is 1234. The dog is friendly but barks a lot — don't worry about her. Please watch the back garden bed near the fence, my daughter just planted bulbs there.</p>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <button style="width: 100%; background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#FFF" stroke-width="1.6"/><polygon points="6.5,5 11,8 6.5,11" fill="#FFF"/></svg>
+              Start work
+            </button>
+          </div>
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M8 6 V3.5 H14 V6" stroke="#0E6D55" stroke-width="1.6" fill="none"/><path d="M3 11 H19" stroke="#0E6D55" stroke-width="1.6"/></svg>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M11 6 V11 L14 13" stroke="#888" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#888" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s3">
+      <div class="caption">
+        <div class="step">STEP 03</div>
+        <h2>In progress</h2>
+        <p>Status pill confirms the timer's running. Before photos done as small thumbnails; after photos are the next prominent action. Mark complete waits below until at least one after photo is in.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 4px 22px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size: 13px; color: #555; font-weight: 500;">Back</span>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #E0F2EC; padding: 5px 12px; border-radius: 999px;">
+              <div style="width: 7px; height: 7px; background: #0E6D55; border-radius: 50%;"></div>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 700;">In progress · 18 min</span>
+            </div>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+              <h2 style="font-size: 22px; font-weight: 700; margin: 0; color: #1A1A1A; letter-spacing: -0.5px; line-height: 1.15;">Maple Street home</h2>
+              <span style="font-size: 22px; font-weight: 700; color: #0E6D55; letter-spacing: -0.4px;">$48</span>
+            </div>
+            <span style="font-size: 12px; color: #777; font-weight: 500;">412 Maple St · Started 9:42am</span>
+          </div>
+          <div style="padding: 0 22px 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Before photos</span>
+            <div style="display: inline-flex; align-items: center; gap: 5px;">
+              <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="#0E6D55"/><path d="M3.5 6 L5.5 8 L9 4.5" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              <span style="font-size: 11px; color: #0A5746; font-weight: 600;">3 captured</span>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; aspect-ratio: 1; border-radius: 12px; overflow: hidden;">
+                <svg viewBox="0 0 60 60" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;">
+                  <rect width="60" height="60" fill="#728E48"/>
+                  <ellipse cx="14" cy="22" rx="12" ry="7" fill="#5C7838" opacity="0.5"/>
+                  <ellipse cx="44" cy="38" rx="14" ry="7" fill="#5C7838" opacity="0.42"/>
+                  <g stroke="#EDE7B8" stroke-width="0.4" stroke-linecap="round" fill="none" opacity="0.65">
+                    <path d="M5 56 L4 50"/><path d="M5 56 L7 51"/>
+                    <path d="M16 54 L15 48"/><path d="M16 54 L17 47"/>
+                    <path d="M28 56 L27 50"/><path d="M28 56 L29 49"/>
+                    <path d="M40 54 L39 48"/><path d="M40 54 L41 47"/>
+                    <path d="M52 56 L51 50"/><path d="M52 56 L53 49"/>
+                    <path d="M10 38 L9 32"/><path d="M22 36 L21 30"/>
+                    <path d="M34 38 L33 32"/><path d="M46 36 L45 30"/>
+                    <path d="M16 22 L15 16"/><path d="M30 24 L29 18"/><path d="M44 22 L43 16"/>
+                    <path d="M22 8 L21 3"/><path d="M40 10 L39 4"/>
+                  </g>
+                </svg>
+              </div>
+              <div style="flex: 1; aspect-ratio: 1; border-radius: 12px; overflow: hidden;">
+                <svg viewBox="0 0 60 60" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;">
+                  <rect width="60" height="60" fill="#7A9050"/>
+                  <ellipse cx="34" cy="20" rx="14" ry="7" fill="#5E7A38" opacity="0.5"/>
+                  <ellipse cx="18" cy="42" rx="13" ry="7" fill="#5E7A38" opacity="0.45"/>
+                  <g stroke="#EDE7B8" stroke-width="0.4" stroke-linecap="round" fill="none" opacity="0.65">
+                    <path d="M8 56 L7 50"/><path d="M20 54 L19 48"/><path d="M32 56 L31 50"/>
+                    <path d="M44 54 L43 48"/><path d="M54 56 L53 50"/>
+                    <path d="M14 38 L13 32"/><path d="M26 36 L25 30"/><path d="M38 38 L37 32"/>
+                    <path d="M50 36 L49 30"/>
+                    <path d="M10 22 L9 16"/><path d="M24 24 L23 18"/><path d="M38 22 L37 16"/>
+                    <path d="M52 24 L51 18"/>
+                  </g>
+                </svg>
+              </div>
+              <div style="flex: 1; aspect-ratio: 1; border-radius: 12px; overflow: hidden;">
+                <svg viewBox="0 0 60 60" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;">
+                  <rect width="60" height="60" fill="#6F8E45"/>
+                  <ellipse cx="20" cy="24" rx="11" ry="6" fill="#557430" opacity="0.5"/>
+                  <ellipse cx="42" cy="42" rx="13" ry="7" fill="#557430" opacity="0.45"/>
+                  <ellipse cx="44" cy="14" rx="6" ry="3" fill="#A89A4A" opacity="0.4"/>
+                  <g stroke="#EDE7B8" stroke-width="0.4" stroke-linecap="round" fill="none" opacity="0.65">
+                    <path d="M6 56 L5 50"/><path d="M18 54 L17 48"/><path d="M30 56 L29 50"/>
+                    <path d="M42 54 L41 48"/><path d="M54 56 L53 50"/>
+                    <path d="M12 40 L11 34"/><path d="M28 38 L27 32"/><path d="M44 40 L43 34"/>
+                    <path d="M14 22 L13 16"/><path d="M30 24 L29 18"/>
+                    <path d="M22 8 L21 3"/><path d="M48 10 L47 4"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">After photos</span>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="border: 1.5px dashed #C5C2B9; border-radius: 16px; padding: 32px 22px; background: #F4F2EC; text-align: center;">
+              <div style="width: 56px; height: 56px; background: #FFF; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; border: 0.5px solid #E5E2D9;">
+                <svg width="26" height="26" viewBox="0 0 26 26"><rect x="3" y="7" width="20" height="14" rx="2" fill="none" stroke="#0E6D55" stroke-width="1.5"/><circle cx="13" cy="14" r="4" fill="none" stroke="#0E6D55" stroke-width="1.5"/><circle cx="13" cy="14" r="1.8" fill="#0E6D55"/><rect x="9" y="4.5" width="8" height="3" rx="0.5" fill="none" stroke="#0E6D55" stroke-width="1.5"/></svg>
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: #1A1A1A; margin-bottom: 6px; letter-spacing: -0.3px;">Take after photos</div>
+              <div style="font-size: 12px; color: #777; margin-bottom: 16px;">Capture each section — front, back, sides</div>
+              <button style="background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 10px 22px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Open camera</button>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <button style="width: 100%; background: transparent; color: #BBB; border: 1px solid #DDD; border-radius: 999px; padding: 14px 24px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: not-allowed;">Mark complete</button>
+            <p style="font-size: 11px; color: #999; text-align: center; margin: 8px 0 0;">Take at least one after photo to complete</p>
+          </div>
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M8 6 V3.5 H14 V6" stroke="#0E6D55" stroke-width="1.6" fill="none"/><path d="M3 11 H19" stroke="#0E6D55" stroke-width="1.6"/></svg>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M11 6 V11 L14 13" stroke="#888" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#888" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="phase">
+  <div class="phase-header">
+    <span class="phase-num">PHASE 02</span>
+    <h2 class="phase-title">Get paid</h2>
+    <span class="phase-count">1 screen</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="screen-card" id="s4">
+      <div class="caption">
+        <div class="step">STEP 04</div>
+        <h2>Pay</h2>
+        <p>Hero stat for the week mirrors the website's pricing card. A progress bar makes the journey to payout tangible. Recent payouts as a tidy list with a lime check on each paid week.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 18px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 0 22px 14px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 22px;">
+              <div style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; margin-bottom: 10px;">Earned this week</div>
+              <div style="display: flex; align-items: baseline; gap: 4px; margin-bottom: 12px;">
+                <span style="font-size: 48px; font-weight: 700; color: #0E6D55; letter-spacing: -1.5px; line-height: 1;">$144</span>
+                <span style="font-size: 14px; color: #777; margin-left: 8px;">/ $496 expected</span>
+              </div>
+              <div style="height: 6px; background: #F1EFE8; border-radius: 999px; overflow: hidden; margin-bottom: 12px;">
+                <div style="height: 100%; width: 29%; background: #0E6D55; border-radius: 999px;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: #777;">3 of 10 jobs done</span>
+                <span style="font-size: 12px; color: #1A1A1A; font-weight: 600;">Payout Mon May 5</span>
+              </div>
+              <div style="font-size: 11px; color: #999; margin-top: 8px;">Bi-weekly cycle · payouts every 2 weeks</div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Earned today</div>
+                <div style="font-size: 11px; color: #777; margin-top: 4px;">1 of 2 jobs done</div>
+              </div>
+              <span style="font-size: 22px; font-weight: 700; color: #0E6D55; letter-spacing: -0.4px;">$48</span>
+            </div>
+          </div>
+          <div style="padding: 4px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Recent payouts</span>
+          </div>
+          <div style="padding: 0 22px 22px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 18px; padding: 4px 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Apr 21 – 27</div>
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="5" fill="#0E6D55"/><path d="M3 5.5 L5 7.5 L8 4" stroke="#FFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                    <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Paid Apr 28</span>
+                  </div>
+                </div>
+                <span style="font-size: 17px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">$312</span>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Apr 14 – 20</div>
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="5" fill="#0E6D55"/><path d="M3 5.5 L5 7.5 L8 4" stroke="#FFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                    <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Paid Apr 21</span>
+                  </div>
+                </div>
+                <span style="font-size: 17px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">$268</span>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Apr 7 – 13</div>
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="5" fill="#0E6D55"/><path d="M3 5.5 L5 7.5 L8 4" stroke="#FFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                    <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Paid Apr 14</span>
+                  </div>
+                </div>
+                <span style="font-size: 17px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">$295</span>
+              </div>
+              <div style="height: 0.5px; background: #EFEDE5;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 600; color: #1A1A1A;">Mar 31 – Apr 6</div>
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <svg width="11" height="11" viewBox="0 0 11 11"><circle cx="5.5" cy="5.5" r="5" fill="#0E6D55"/><path d="M3 5.5 L5 7.5 L8 4" stroke="#FFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                    <span style="font-size: 11px; color: #0A5746; font-weight: 600;">Paid Apr 7</span>
+                  </div>
+                </div>
+                <span style="font-size: 17px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">$210</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 22px 22px; text-align: center;">
+            <span style="font-size: 12px; color: #0A5746; font-weight: 600;">View all payouts</span>
+          </div>
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M8 6 V3.5 H14 V6" stroke="#888" stroke-width="1.5" fill="none"/><path d="M3 11 H19" stroke="#888" stroke-width="1.5"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M11 6 V11 L14 13" stroke="#888" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="phase">
+  <div class="phase-header">
+    <span class="phase-num">PHASE 03</span>
+    <h2 class="phase-title">Claim work</h2>
+    <span class="phase-count">2 screens</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="screen-card" id="s5">
+      <div class="caption">
+        <div class="step">STEP 05</div>
+        <h2>Pending jobs</h2>
+        <p>Cards posted by the admin sit here until a crew claims them. Each card shows the property, pay, the <strong>program phase</strong> (Aeration, Seeding…), open slots, and whether crew should go together. Marcus taps Accept to pick his day.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 14px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 0 22px 18px;">
+            <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 4px; color: #1A1A1A; letter-spacing: -0.5px;">Pending jobs</h2>
+            <span style="font-size: 13px; color: #777; font-weight: 500;">3 cards open this week</span>
+          </div>
+
+          <div style="padding: 0 22px 12px;">
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 16px; padding: 16px; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <span style="font-size: 16px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">Pine Crescent</span>
+                <span style="font-size: 17px; font-weight: 700; color: #0E6D55;">$48</span>
+              </div>
+              <div style="font-size: 12px; color: #777; margin-bottom: 12px;">23 Pine Cres · This week · ends Fri</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+                <span style="display: inline-flex; align-items: center; gap: 5px; background: #E0F2EC; color: #0A5746; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px;">
+                  <svg width="12" height="12"><use href="#ph-aeration"/></svg>AERATION
+                </span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">1 of 2 slots</span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">Go together: yes</span>
+              </div>
+              <button style="width: 100%; background: transparent; color: #0E6D55; border: 1.5px solid #0E6D55; border-radius: 999px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">Accept · pick a day</button>
+            </div>
+
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 16px; padding: 16px; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <span style="font-size: 16px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">Elm Way</span>
+                <span style="font-size: 17px; font-weight: 700; color: #0E6D55;">$52</span>
+              </div>
+              <div style="font-size: 12px; color: #777; margin-bottom: 12px;">142 Elm Way · This week · ends Fri</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+                <span style="display: inline-flex; align-items: center; gap: 5px; background: #E0F2EC; color: #0A5746; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px;">
+                  <svg width="12" height="12"><use href="#ph-fertilizing"/></svg>FERTILIZING
+                </span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">0 of 1 slot</span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">Solo OK</span>
+              </div>
+              <button style="width: 100%; background: transparent; color: #0E6D55; border: 1.5px solid #0E6D55; border-radius: 999px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">Accept · pick a day</button>
+            </div>
+
+            <div style="background: #FFF; border: 0.5px solid #E5E2D9; border-radius: 16px; padding: 16px; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <span style="font-size: 16px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.3px;">Willow Drive</span>
+                <span style="font-size: 17px; font-weight: 700; color: #0E6D55;">$56</span>
+              </div>
+              <div style="font-size: 12px; color: #777; margin-bottom: 12px;">312 Willow Dr · This week · ends Fri</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+                <span style="display: inline-flex; align-items: center; gap: 5px; background: #E0F2EC; color: #0A5746; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px;">
+                  <svg width="12" height="12"><use href="#ph-seeding"/></svg>SEEDING
+                </span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">0 of 2 slots</span>
+                <span style="background: #F1EFE8; color: #555; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600;">Go together: yes</span>
+              </div>
+              <button style="width: 100%; background: transparent; color: #0E6D55; border: 1.5px solid #0E6D55; border-radius: 999px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">Accept · pick a day</button>
+            </div>
+          </div>
+
+          <div style="padding: 6px 22px 20px; text-align: center;">
+            <span style="font-size: 11px; color: #999;">Cards expire if no one claims them by Friday.</span>
+          </div>
+
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M8 6 V3.5 H14 V6" stroke="#888" stroke-width="1.5" fill="none"/><path d="M3 11 H19" stroke="#888" stroke-width="1.5"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M11 6 V11 L14 13" stroke="#0E6D55" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#888" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen-card" id="s6">
+      <div class="caption">
+        <div class="step">STEP 06</div>
+        <h2>Accept job</h2>
+        <p>Drilled in from a pending card. Marcus picks any day this week + a time window. Capacity reminder shows what stays open after he claims. Confirm moves the card into his Jobs tab.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: #1A1A1A;">
+            <span>9:41</span>
+            <span style="display: flex; gap: 4px; align-items: center;">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 10px;">
+            <span style="font-size: 19px; font-weight: 700; color: #1A1A1A;">Hi Marcus!</span>
+            <div style="width: 36px; height: 36px; background: #C8EE3A; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+          </div>
+          <div style="padding: 4px 22px 14px; display: flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size: 13px; color: #555; font-weight: 500;">Back to pending</span>
+          </div>
+
+          <div style="padding: 0 22px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+              <h2 style="font-size: 24px; font-weight: 700; margin: 0; color: #1A1A1A; letter-spacing: -0.5px; line-height: 1.15;">Pine Crescent</h2>
+              <span style="font-size: 24px; font-weight: 700; color: #0E6D55; letter-spacing: -0.4px;">$48</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: #E0F2EC; padding: 5px 12px; border-radius: 999px; color: #0A5746;">
+                <svg width="13" height="13"><use href="#ph-aeration"/></svg>
+                <span style="font-size: 11px; color: #0A5746; font-weight: 700; letter-spacing: 0.5px;">PHASE · AERATION</span>
+              </div>
+              <span style="font-size: 11px; color: #777;">23 Pine Cres</span>
+            </div>
+          </div>
+
+          <div style="padding: 4px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Pick a day this week</span>
+          </div>
+          <div style="padding: 0 22px 18px; display: flex; gap: 6px; overflow-x: auto;">
+            <button style="background: transparent; color: #999; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 12px 14px; cursor: pointer; font-family: inherit; min-width: 56px; flex-shrink: 0;">
+              <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">MON</div>
+              <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">5</div>
+            </button>
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 12px 14px; cursor: pointer; font-family: inherit; min-width: 56px; flex-shrink: 0;">
+              <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.5px; color: #777;">TUE</div>
+              <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">6</div>
+            </button>
+            <button style="background: #0E6D55; color: #FFF; border: none; border-radius: 14px; padding: 12px 14px; cursor: pointer; font-family: inherit; min-width: 56px; flex-shrink: 0;">
+              <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9;">WED</div>
+              <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">7</div>
+            </button>
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 12px 14px; cursor: pointer; font-family: inherit; min-width: 56px; flex-shrink: 0;">
+              <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.5px; color: #777;">THU</div>
+              <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">8</div>
+            </button>
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 14px; padding: 12px 14px; cursor: pointer; font-family: inherit; min-width: 56px; flex-shrink: 0;">
+              <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.5px; color: #777;">FRI</div>
+              <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">9</div>
+            </button>
+          </div>
+
+          <div style="padding: 4px 22px 8px;">
+            <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600;">Pick a time window</span>
+          </div>
+          <div style="padding: 0 22px 18px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 999px; padding: 9px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Morning</button>
+            <button style="background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 9px 16px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">Midday</button>
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 999px; padding: 9px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Afternoon</button>
+            <button style="background: transparent; color: #1A1A1A; border: 0.5px solid #E5E2D9; border-radius: 999px; padding: 9px 16px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Evening</button>
+          </div>
+
+          <div style="padding: 0 22px 14px;">
+            <div style="background: #F2F8F5; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
+              <svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink: 0;"><circle cx="8" cy="8" r="6" fill="none" stroke="#0E6D55" stroke-width="1.4"/><path d="M8 5 V8 L10 9.5" stroke="#0E6D55" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <div style="font-size: 12px; color: #0A5746; line-height: 1.45;">
+                <strong>Goes together with 1 other crew.</strong> 1 slot stays open after you claim.
+              </div>
+            </div>
+          </div>
+
+          <div style="padding: 4px 22px 22px;">
+            <button style="width: 100%; background: #0E6D55; color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;">Confirm · take this job</button>
+          </div>
+
+          <div style="border-top: 0.5px solid #EFEDE5; padding: 10px 14px 14px; display: flex; justify-content: space-around; background: #FBFAF7;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="6" width="16" height="12" rx="1.8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M8 6 V3.5 H14 V6" stroke="#888" stroke-width="1.5" fill="none"/><path d="M3 11 H19" stroke="#888" stroke-width="1.5"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Jobs</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#0E6D55" stroke-width="1.6"/><path d="M11 6 V11 L14 13" stroke="#0E6D55" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+              <span style="position: absolute; top: -2px; right: 2px; min-width: 14px; height: 14px; padding: 0 4px; background: #C58D2C; color: #FFF; border-radius: 999px; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FBFAF7;">3</span>
+              <span style="font-size: 10px; color: #0A5746; font-weight: 700;">Pending</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#888" stroke-width="1.5"/><path d="M14 8 H9.5 C8.5 8 8 8.8 8 9.6 C8 10.4 8.5 11 9.5 11 H12.5 C13.5 11 14 11.6 14 12.4 C14 13.2 13.5 14 12.5 14 H8 M11 6.5 V8 M11 14 V15.5" stroke="#888" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+              <span style="font-size: 10px; color: #888; font-weight: 600;">Pay</span>
+            </div>
+          </div>
+          <div style="height: 4px; width: 120px; background: #1A1A1A; border-radius: 2px; margin: 0 auto 10px;"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">redefine<span style="color: #C8EE3A;">.</span></div>
+  Crew app · v2 design walkthrough · Thunder Bay, ON
+</footer>
+
+</body>
+</html>

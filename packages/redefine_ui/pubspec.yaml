@@ -1,0 +1,17 @@
+name: redefine_ui
+description: Shared design system (tokens, theme, widgets) for the Redefine apps.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  redefine_core:
+    path: ../redefine_core
+
+flutter:

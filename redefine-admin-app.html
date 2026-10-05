@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redefine — Admin App</title>
+<style>
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/500.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans/700.css');
+
+:root {
+  --teal: #0E6D55;
+  --teal-deep: #0A5746;
+  --teal-tint: #E0F2EC;
+  --lime: #C8EE3A;
+  --page: #FAF8F2;
+  --paper: #EFEBE0;
+  --paper-2: #F1EFE8;
+  --surface: #FBFAF7;
+  --ink: #1A1A1A;
+  --ink-muted: #777;
+  --ink-soft: #999;
+  --border: #E5E2D9;
+  --border-soft: #EFEDE5;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Brand bar */
+.brand-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 248, 242, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand-mark {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: -0.3px;
+}
+.brand-mark .dot {
+  color: var(--lime);
+  display: inline-block;
+  margin-left: 1px;
+}
+.brand-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+/* Hero */
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 96px 32px 40px;
+  text-align: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+  margin: 0 0 22px;
+  color: var(--ink);
+}
+.hero h1 .accent {
+  color: var(--teal);
+  position: relative;
+}
+.hero h1 .accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 8px;
+  background: var(--lime);
+  z-index: -1;
+  border-radius: 2px;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.65;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* TOC */
+.toc {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 32px 80px;
+}
+.toc a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  background: #FFF;
+  transition: all 0.15s ease;
+}
+.toc a:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.toc a span.num {
+  font-size: 10px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+/* Phase */
+.phase {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 56px;
+  padding-bottom: 22px;
+  border-bottom: 0.5px solid var(--border);
+}
+.phase-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1.2px;
+  background: var(--teal-tint);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+.phase-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--ink);
+  margin: 0;
+}
+.phase-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+/* Grid + cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 64px 36px;
+  justify-items: center;
+}
+.screen-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.caption {
+  margin-bottom: 22px;
+  padding: 0 4px;
+}
+.caption .step {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.caption h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.caption p {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+.phone-bezel {
+  background: var(--paper);
+  border-radius: 28px;
+  padding: 14px;
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+}
+.phone-screen {
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 64px 32px 80px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  border-top: 0.5px solid var(--border);
+  margin-top: 40px;
+  background: #FFF;
+}
+footer .footer-brand {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  margin-bottom: 4px;
+}
+footer .footer-brand .dot {
+  color: var(--lime);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .hero { padding: 60px 22px 32px; }
+  .hero h1 { font-size: 34px; }
+  .phase { padding: 0 22px 60px; }
+  .phase-header { gap: 12px; margin-bottom: 40px; }
+  .phase-title { font-size: 22px; }
+  .grid { gap: 52px 24px; }
+  .toc { padding: 0 22px 60px; }
+}
+
+/* === Phone screen utilities === */
+.sb { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 4px; font-size: 11px; font-weight: 600; color: var(--ink); }
+.sb-icons { display: flex; gap: 4px; align-items: center; }
+.hi { display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 14px; }
+.hi-text { font-size: 19px; font-weight: 700; color: var(--ink); }
+.av-lime { width: 36px; height: 36px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.h-2 { font-size: 24px; font-weight: 700; margin: 0; color: var(--ink); letter-spacing: -0.5px; }
+.subline { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
+.section-eyebrow { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+.pad-x { padding-left: 22px; padding-right: 22px; }
+.card { background: #FFF; border: 0.5px solid var(--border); border-radius: 18px; }
+.card-md { background: #FFF; border: 0.5px solid var(--border); border-radius: 16px; }
+.card-sm { background: #FFF; border: 0.5px solid var(--border); border-radius: 14px; }
+
+/* Crew chip */
+.cc { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+.cc-mr { background: var(--lime); color: var(--ink); }
+.cc-tr { background: var(--teal-tint); color: var(--teal-deep); }
+.cc-paper { background: var(--paper-2); color: #555; }
+.cc-stack { display: flex; flex-shrink: 0; }
+.cc-stack > .cc + .cc { border: 1.5px solid var(--surface); margin-left: -7px; }
+
+/* Status pill (NOW) */
+.pill-now { display: inline-flex; align-items: center; gap: 4px; background: var(--teal-tint); padding: 3px 9px; border-radius: 999px; }
+.pill-now-dot { width: 5px; height: 5px; background: var(--lime); border-radius: 50%; }
+.pill-now-text { font-size: 9px; color: var(--teal-deep); font-weight: 700; letter-spacing: 0.5px; }
+
+/* ETA muted text */
+.eta-text { font-size: 11px; color: var(--ink-muted); font-weight: 600; }
+
+/* Status column */
+.status-col { min-width: 60px; display: flex; align-items: center; flex-shrink: 0; }
+
+/* Property + crew row */
+.prop-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 0.5px solid var(--border-soft); gap: 10px; }
+.prop-row:first-child { border-top: none; }
+.prop-name { font-size: 13px; color: var(--ink); font-weight: 600; flex: 1; min-width: 0; }
+
+/* + Post (unposted job-card affordance — calm gray) */
+.assign-btn { background: transparent; color: #777; border: 1px dashed #999; border-radius: 999px; padding: 3px 10px; font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.3px; }
+/* + Self-assign (URGENT — Friday no crew) */
+.urgent-btn { background: transparent; color: #C58D2C; border: 1px dashed #C58D2C; border-radius: 999px; padding: 3px 10px; font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.3px; }
+
+/* Bottom nav */
+.bnav { border-top: 0.5px solid var(--border-soft); padding: 10px 14px 14px; display: flex; justify-content: space-around; background: var(--surface); }
+.bnav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bnav-label { font-size: 10px; color: #888; font-weight: 600; }
+.bnav-label-on { font-size: 10px; color: var(--teal-deep); font-weight: 700; }
+
+/* Home indicator */
+.hi-bar { height: 4px; width: 120px; background: var(--ink); border-radius: 2px; margin: 0 auto 10px; }
+
+/* Section eyebrow row */
+.eyebrow-row { padding: 4px 22px 8px; }
+
+/* Back link */
+.back { padding: 4px 22px 14px; display: flex; align-items: center; gap: 8px; }
+.back span { font-size: 13px; color: #555; font-weight: 500; }
+
+/* Status pill (orange/pending) */
+.pill-pending { display: inline-flex; align-items: center; gap: 5px; background: #FFF3E0; padding: 4px 10px; border-radius: 999px; font-size: 10px; color: #C58D2C; font-weight: 700; letter-spacing: 0.4px; }
+.pill-pending-dot { width: 5px; height: 5px; background: #C58D2C; border-radius: 50%; }
+
+/* Lime "RECOMMENDED" / "NEW APPLICATION" pill */
+.pill-lime { display: inline-flex; align-items: center; background: var(--lime); color: var(--ink); padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 0.6px; }
+
+/* Today card left rule */
+.today-card { border-left: 3px solid var(--teal); }
+
+/* Program track (Customer detail) */
+.ptrack-cell { flex: 1 1 0; min-width: 0; aspect-ratio: 1; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s ease; }
+.ptrack-cell:hover { transform: translateY(-1px); }
+.ptrack-done { background: var(--teal); color: #FFF; }
+.ptrack-now { background: var(--teal); color: #FFF; box-shadow: inset 0 3px 0 var(--lime); }
+.ptrack-posted { background: var(--teal-tint); border: 0.5px solid var(--teal); color: var(--teal-deep); }
+.ptrack-unposted { background: transparent; border: 1px dashed #999; color: #777; }
+.ptrack-urgent { background: #FFF3E0; border: 1px solid #C58D2C; color: #C58D2C; }
+.ptrack-future { background: var(--paper-2); border: 0.5px solid var(--border); color: var(--ink-soft); }
+
+/* Timeline view (S3) */
+.tl-frame { display: flex; align-items: stretch; }
+.tl-left { flex-shrink: 0; width: 88px; background: var(--surface); border-right: 0.5px solid var(--border); position: sticky; left: 0; z-index: 2; }
+.tl-right { flex: 1; overflow-x: auto; overflow-y: visible; }
+.tl-track-strip { display: flex; min-width: 480px; }
+.tl-week-col { width: 120px; flex-shrink: 0; border-right: 0.5px solid var(--border-soft); }
+.tl-week-col:last-child { border-right: none; }
+.tl-axis-cell { padding: 8px 8px 6px; font-size: 9px; font-weight: 700; color: #999; letter-spacing: 0.6px; text-transform: uppercase; border-bottom: 0.5px solid var(--border); height: 28px; box-sizing: border-box; background: var(--paper-2); }
+.tl-customer-cell { height: 44px; display: flex; align-items: center; padding: 0 10px; gap: 8px; border-bottom: 0.5px solid var(--border-soft); }
+.tl-customer-cell:last-child { border-bottom: none; }
+.tl-customer-name { font-size: 11px; font-weight: 700; color: var(--ink); line-height: 1.1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tl-week-axis { display: flex; }
+.tl-clip-row { height: 44px; border-bottom: 0.5px solid var(--border-soft); display: flex; align-items: center; padding: 6px 8px; }
+.tl-clip-row:last-child { border-bottom: none; }
+.tl-clip { flex: 1; height: 32px; border-radius: 6px; padding: 0 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10px; font-weight: 700; cursor: pointer; }
+.tl-clip-empty { background: transparent; }
+.tl-clip-unposted { background: var(--paper-2); border: 1px dashed #999; color: #777; }
+.tl-clip-awaiting { background: var(--teal-tint); border: 0.5px solid var(--teal); color: var(--teal-deep); }
+.tl-clip-urgent { background: #FFF3E0; border: 1px solid #C58D2C; color: #C58D2C; }
+.tl-clip-claimed { background: var(--teal); color: #FFF; }
+.tl-clip-done { background: var(--paper-2); border: 0.5px solid var(--border); color: var(--ink-soft); opacity: 0.7; }
+.tl-axis-row { display: flex; }
+.tl-stack-col { display: flex; flex-direction: column; }
+
+/* Three-pill segmented control (Timeline | Week | Month) */
+.seg3 { display: inline-flex; background: var(--paper-2); border-radius: 999px; padding: 3px; }
+.seg3 button { background: transparent; color: #888; border: none; border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 11px; font-family: inherit; cursor: pointer; }
+.seg3 button.on { background: #FFF; color: var(--teal-deep); font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+/* Week list states (S4) */
+.row-clean { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 0.5px solid var(--border-soft); }
+.row-clean:first-child { border-top: none; }
+.icon-bubble { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ib-gray { background: var(--paper-2); color: #777; border: 0.5px dashed #999; }
+.ib-await { background: var(--teal-tint); color: var(--teal-deep); }
+.ib-urgent { background: #FFF3E0; color: #C58D2C; border: 1px solid #C58D2C; }
+.ib-claimed { background: var(--teal-tint); color: var(--teal-deep); }
+.ib-done { background: var(--paper-2); color: var(--ink-muted); opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- Phase icon symbols (referenced via <use href="#ph-..."/>) -->
+<svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+  <defs>
+    <symbol id="ph-raking" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 3 L7.5 7.5"/>
+        <path d="M5 9.5 L11 9.5"/>
+        <path d="M5.5 9.8 V12 M7 9.8 V12 M8.5 9.8 V12 M10 9.8 V12 M11.5 9.8 V12"/>
+      </g>
+    </symbol>
+    <symbol id="ph-leafblow" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 3 C 8 3, 5 5, 5 8.5 C 5 10, 6 11, 7.5 11 C 10.5 11, 12 8, 11 3 Z"/>
+        <path d="M7 9 C 8 8, 9 6.5, 10 5"/>
+        <path d="M2 6 H3.5 M1.5 8.5 H3 M2.5 11 H4"/>
+      </g>
+    </symbol>
+    <symbol id="ph-aeration" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 2.5 V8.5 M7 2.5 V8.5 M10.5 2.5 V8.5"/>
+        <path d="M2 11 L12 11"/>
+        <path d="M3.5 9.5 V11" stroke-dasharray="0.8 1"/>
+        <path d="M7 9.5 V11" stroke-dasharray="0.8 1"/>
+        <path d="M10.5 9.5 V11" stroke-dasharray="0.8 1"/>
+      </g>
+    </symbol>
+    <symbol id="ph-seeding" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 12 V7"/>
+        <path d="M7 7 C 5 7, 4 6, 4 4 C 5.5 4, 7 5, 7 7 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M7 7 C 9 7, 10 6, 10 4 C 8.5 4, 7 5, 7 7 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M2.5 12 H11.5"/>
+      </g>
+    </symbol>
+    <symbol id="ph-fertilizing" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="5" height="6.5" rx="0.8"/>
+        <path d="M5 5 V3.5 H7"/>
+        <path d="M9 5.5 L11 4.5 M9.5 8 L11.5 8 M9 10.5 L11 11.5"/>
+      </g>
+    </symbol>
+    <symbol id="ph-overseeding" viewBox="0 0 14 14">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 11.5 V8 M4 8 C 3 8, 2.5 7, 2.5 5.5 C 3.5 5.5, 4 6.5, 4 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M4 8 C 5 8, 5.5 7, 5.5 5.5 C 4.5 5.5, 4 6.5, 4 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M10 11.5 V8 M10 8 C 9 8, 8.5 7, 8.5 5.5 C 9.5 5.5, 10 6.5, 10 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M10 8 C 11 8, 11.5 7, 11.5 5.5 C 10.5 5.5, 10 6.5, 10 8 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M2 11.5 H12"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="brand-bar">
+  <div class="brand-mark">redefine<span class="dot">.</span></div>
+  <div class="brand-meta">ADMIN APP · v3 · THUNDER BAY, ON</div>
+</div>
+
+<section class="hero">
+  <div class="eyebrow">▎ ADMIN SUITE</div>
+  <h1>Designed for the operator who keeps it <span class="accent">all moving</span></h1>
+  <p>Nine mobile screens for the person who runs the business — triaging quotes, posting bi-weekly job cards, monitoring today's run, holding the customer relationship.</p>
+</section>
+
+<nav class="toc">
+  <a href="#p1"><span class="num">01</span> Daily scan</a>
+  <a href="#p2"><span class="num">02</span> Planning</a>
+  <a href="#p3"><span class="num">03</span> People</a>
+  <a href="#p4"><span class="num">04</span> Drill-ins</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- PHASE 01 — DAILY SCAN                                        -->
+<!-- ============================================================ -->
+<section class="phase" id="p1">
+  <div class="phase-header">
+    <span class="phase-num">01</span>
+    <h2 class="phase-title">Daily scan</h2>
+    <span class="phase-count">2 screens</span>
+  </div>
+  <div class="grid">
+
+    <!-- ===== Screen 1: Home / Inbox ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 1</span>
+        <h2>Home / Inbox</h2>
+        <p>Lia's daily landing. <strong>Needs attention</strong> stacks blockers — quote requests, crew applications, unposted job cards. <strong>This week</strong> shows filled-vs-unfilled at a glance with orange alerts on cards still waiting for a crew. <strong>Today's jobs</strong> uses a status column instead of a time column: ● NOW for in-progress, ~ETA when crew has set one, blank when claimed but quiet, dashed <strong>+ Post</strong> for cards that still need to be opened to crew.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <!-- status bar -->
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <!-- hi -->
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <!-- title -->
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <h2 class="h-2" style="margin-bottom: 4px;">Wednesday, May 3</h2>
+            <span class="subline">6 jobs · $312 booked</span>
+          </div>
+
+          <!-- Needs attention -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Needs attention</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+              <div style="position: relative; width: 32px; height: 32px; background: var(--paper-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 4 L13 4 L13 11 L8 11 L5 13.5 L5 11 L3 11 Z" fill="none" stroke="#0E6D55" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                <span style="position: absolute; top: -3px; right: -3px; width: 8px; height: 8px; background: var(--lime); border-radius: 50%; border: 1.5px solid #FFF;"></span>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink);">Quote requests · 3</div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 1px;">Oldest pending 2 days</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="card-md" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+              <div style="width: 32px; height: 32px; background: var(--paper-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="6" r="2.5" fill="none" stroke="#0E6D55" stroke-width="1.4"/><path d="M3 13 C 3 10.5, 5 9, 8 9 C 11 9, 13 10.5, 13 13" fill="none" stroke="#0E6D55" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink);">Crew application · 1</div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 1px;">Tasha Rivera, applied 2 days ago</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="card-md" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+              <div style="width: 32px; height: 32px; background: var(--paper-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2.5" y="3.5" width="11" height="9" rx="1.5" fill="none" stroke="#0E6D55" stroke-width="1.4"/><path d="M6 6.5 L10 6.5 M6 9 L9 9" stroke="#0E6D55" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink);">Unposted job cards · 2</div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 1px;">Pine Cres today, Elm Way Friday</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- This week -->
+          <div class="eyebrow-row" style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span class="section-eyebrow">This week</span>
+            <span style="font-size: 11px; color: var(--teal-deep); font-weight: 600;">View posting board →</span>
+          </div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card" style="padding: 12px 16px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--ink);">Wk of May 1</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;"><span style="color: var(--teal-deep); font-weight: 700;">5 of 8 jobs filled</span> · 3 unfilled</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <div style="width: 30px; height: 6px; background: var(--paper-2); border-radius: 999px; overflow: hidden;">
+                      <div style="width: 62.5%; height: 100%; background: var(--teal);"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-sm" style="padding: 4px 14px;">
+              <div class="prop-row" style="padding: 11px 0;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Pine Cres</div>
+                  <span style="display: inline-flex; align-items: center; gap: 5px; background: var(--paper-2); padding: 4px 10px; border-radius: 999px; font-size: 10px; color: #777; font-weight: 700; letter-spacing: 0.4px; margin-top: 4px;"><span style="width: 5px; height: 5px; background: #999; border-radius: 50%;"></span>TO POST</span>
+                </div>
+                <button class="assign-btn">+ Post</button>
+              </div>
+              <div class="prop-row" style="padding: 11px 0;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Elm Way</div>
+                  <span style="display: inline-flex; align-items: center; gap: 5px; background: var(--paper-2); padding: 4px 10px; border-radius: 999px; font-size: 10px; color: #777; font-weight: 700; letter-spacing: 0.4px; margin-top: 4px;"><span style="width: 5px; height: 5px; background: #999; border-radius: 50%;"></span>TO POST</span>
+                </div>
+                <button class="assign-btn">+ Post</button>
+              </div>
+              <div class="prop-row" style="padding: 11px 0;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Willow Dr</div>
+                  <span style="display: inline-flex; align-items: center; gap: 5px; background: var(--paper-2); padding: 4px 10px; border-radius: 999px; font-size: 10px; color: #777; font-weight: 700; letter-spacing: 0.4px; margin-top: 4px;"><span style="width: 5px; height: 5px; background: #999; border-radius: 50%;"></span>TO POST</span>
+                </div>
+                <button class="assign-btn">+ Post</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Today's jobs -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Today's jobs</span></div>
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div class="card" style="padding: 4px 16px;">
+              <!-- row 1: NOW -->
+              <div class="prop-row">
+                <div class="status-col">
+                  <span class="pill-now"><span class="pill-now-dot"></span><span class="pill-now-text">NOW</span></span>
+                </div>
+                <span class="prop-name">Maple St</span>
+                <div class="cc-stack"><div class="cc cc-mr">MR</div><div class="cc cc-tr">TR</div></div>
+              </div>
+              <!-- row 2: ETA ~11am -->
+              <div class="prop-row">
+                <div class="status-col"><span class="eta-text">~11am</span></div>
+                <span class="prop-name">Cedar Ave</span>
+                <div class="cc cc-paper">JP</div>
+              </div>
+              <!-- row 3: ETA ~12pm -->
+              <div class="prop-row">
+                <div class="status-col"><span class="eta-text">~12pm</span></div>
+                <span class="prop-name">Birch Ln</span>
+                <div class="cc-stack"><div class="cc cc-mr">MR</div><div class="cc cc-tr">TR</div></div>
+              </div>
+              <!-- row 4: blank -->
+              <div class="prop-row">
+                <div class="status-col"></div>
+                <span class="prop-name">Oak St</span>
+                <div class="cc cc-paper">JP</div>
+              </div>
+              <!-- row 5: blank -->
+              <div class="prop-row">
+                <div class="status-col"></div>
+                <span class="prop-name">Elm Way</span>
+                <div class="cc cc-paper">PL</div>
+              </div>
+              <!-- row 6: + Post -->
+              <div class="prop-row" style="padding-bottom: 14px;">
+                <div class="status-col"></div>
+                <span class="prop-name">Pine Cres</span>
+                <button class="assign-btn">+ Post</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- bottom nav: home active -->
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="12" y="3" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="3" y="12" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="12" y="12" width="7" height="7" rx="1" fill="#0E6D55"/></svg>
+              <span class="bnav-label-on">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 9 H19" stroke="#888" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== Screen 2: Quote detail ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 2</span>
+        <h2>Quote detail</h2>
+        <p>Drilled in from Quote requests. Header carries the pending-time pressure with an orange pill. Customer note + crew-visit confirmation, then pricing — Lia types the custom <strong>Lawn care (bi-weekly)</strong> rate she agreed on-site (base + location). The <strong>Lawn mowing only (one-time)</strong> price stays fixed. Send button commits the quote to Sarah's app.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi" style="padding-bottom: 10px;">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Back to inbox</span>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <span class="pill-pending"><span class="pill-pending-dot"></span>PENDING 2 DAYS</span>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <h2 class="h-2" style="line-height: 1.15; margin-bottom: 6px;">Quote for Sarah Mitchell</h2>
+            <span class="subline">Submitted Apr 30 · Maple Street home</span>
+          </div>
+
+          <!-- Customer card -->
+          <div class="pad-x" style="padding-bottom: 12px;">
+            <div class="card-md" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+              <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 700;">Sarah Mitchell</div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 1px;">sarah.m@gmail.com · (807) 555-0142</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Property card -->
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <div class="card-md" style="padding: 14px 16px; display: flex; gap: 12px; align-items: center;">
+              <div style="width: 56px; height: 56px; background: var(--paper-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg viewBox="0 0 100 100" width="48" height="48">
+                  <ellipse cx="50" cy="82" rx="42" ry="10" fill="#A8CC8C"/>
+                  <ellipse cx="50" cy="80" rx="42" ry="10" fill="#8FB871"/>
+                  <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/>
+                  <polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                  <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/>
+                  <polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                  <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/>
+                  <rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-size: 13px; font-weight: 700;">Maple Street home</div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">412 Maple St</div>
+                <div style="font-size: 10px; color: var(--ink-muted); margin-top: 4px;">Two-story · medium yard</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Note from Sarah</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-sm" style="padding: 12px 14px;">
+              <p style="font-size: 13px; color: #444; line-height: 1.5; margin: 0; font-style: italic;">"Just bought the house, lawn's been neglected. Looking for someone reliable for the season."</p>
+            </div>
+          </div>
+
+          <!-- Crew assessment -->
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <div style="background: var(--teal-tint); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
+              <div style="width: 22px; height: 22px; background: var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 6 L5 8 L9 4" stroke="#0A5746" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              </div>
+              <div style="font-size: 12px; color: var(--teal-deep); font-weight: 600;">Visited Apr 28 by Marcus Reid</div>
+            </div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Pricing · base + location adjustment</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 16px; border: 2px solid var(--teal); position: relative;">
+              <span class="pill-lime" style="position: absolute; top: -9px; left: 16px;">RECOMMENDED</span>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <span style="font-size: 14px; font-weight: 700; color: var(--ink);">Lawn care (bi-weekly)</span>
+                <div style="display: flex; align-items: baseline; gap: 2px;">
+                  <span style="font-size: 14px; color: var(--teal); font-weight: 700;">$</span>
+                  <span style="font-size: 26px; font-weight: 700; color: var(--teal); letter-spacing: -0.5px;">52</span>
+                  <span style="font-size: 11px; color: var(--ink-muted); margin-left: 4px;">/visit</span>
+                  <svg width="13" height="13" viewBox="0 0 14 14" style="margin-left: 6px;"><path d="M9 2.5 L11.5 5 L5 11.5 L2.5 11.5 L2.5 9 Z" fill="none" stroke="#0E6D55" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted);">Billed bi-weekly · 16 visits · ~8 months · tap to edit</div>
+            </div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div class="card-md" style="padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="font-size: 14px; font-weight: 700;">Lawn mowing only (one-time)</span>
+                <div style="display: flex; align-items: baseline; gap: 2px;">
+                  <span style="font-size: 14px; color: var(--ink); font-weight: 700;">$</span>
+                  <span style="font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.5px;">85</span>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted); margin-top: 6px;">Fixed price · single visit</div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <button style="width: 100%; background: var(--teal); color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;">Send quote to Sarah</button>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="12" y="3" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="3" y="12" width="7" height="7" rx="1" fill="#0E6D55"/><rect x="12" y="12" width="7" height="7" rx="1" fill="#0E6D55"/></svg>
+              <span class="bnav-label-on">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 9 H19" stroke="#888" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PHASE 02 — PLANNING                                          -->
+<!-- ============================================================ -->
+<section class="phase" id="p2">
+  <div class="phase-header">
+    <span class="phase-num">02</span>
+    <h2 class="phase-title">Planning</h2>
+    <span class="phase-count">3 screens</span>
+  </div>
+  <div class="grid">
+
+    <!-- ===== Screen 3: Schedule · Timeline (video-editor track view) ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 3</span>
+        <h2>Schedule · Timeline</h2>
+        <p>One <strong>track per customer</strong>, four weeks of cycles laid out left-to-right like a video editor. The customer column on the left stays sticky while Lia scrolls horizontally through the weeks. Empty cells = posting opportunities; orange clips = Friday-no-crew alerts.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="title-row">
+              <h2 class="h-2">Schedule</h2>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 2 L8 6 L4 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <span class="subline">4 weeks · scroll → · 1 urgent · 3 to post</span>
+          </div>
+
+          <!-- 3-pill toggle: Timeline | Week | Month (Timeline active) -->
+          <div class="pad-x" style="padding-bottom: 14px; display: flex; justify-content: flex-end;">
+            <div class="seg3">
+              <button class="on">Timeline</button>
+              <button>Week</button>
+              <button>Month</button>
+            </div>
+          </div>
+
+          <!-- TIMELINE TRACK FRAME -->
+          <div style="padding: 0 0 14px;">
+            <div class="tl-frame" style="border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); background: #FFF;">
+              <!-- Sticky left: customer column -->
+              <div class="tl-left">
+                <div class="tl-axis-cell" style="background: var(--paper-2); color: var(--teal-deep); font-weight: 700;">CUSTOMER</div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-mr" style="width: 24px; height: 24px; font-size: 9px;">SM</div>
+                  <span class="tl-customer-name">Maple St</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-tr" style="width: 24px; height: 24px; font-size: 9px;">AT</div>
+                  <span class="tl-customer-name">Cedar Ave</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-mr" style="width: 24px; height: 24px; font-size: 9px;">PL</div>
+                  <span class="tl-customer-name">Birch Ln</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-tr" style="width: 24px; height: 24px; font-size: 9px;">HW</div>
+                  <span class="tl-customer-name">Pine Cres</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-mr" style="width: 24px; height: 24px; font-size: 9px;">EW</div>
+                  <span class="tl-customer-name">Elm Way</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-paper" style="width: 24px; height: 24px; font-size: 9px;">GH</div>
+                  <span class="tl-customer-name">Oak St</span>
+                </div>
+                <div class="tl-customer-cell">
+                  <div class="cc cc-tr" style="width: 24px; height: 24px; font-size: 9px;">KM</div>
+                  <span class="tl-customer-name">Willow Dr</span>
+                </div>
+              </div>
+
+              <!-- Scrollable right area -->
+              <div class="tl-right">
+                <div class="tl-track-strip">
+                  <!-- WK May 1 column -->
+                  <div class="tl-week-col">
+                    <div class="tl-axis-cell">Wk May 1</div>
+                    <!-- Maple St: claimed Aeration -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-claimed" title="Aeration · Cedar Ave"><svg width="12" height="12" style="color:#FFF"><use href="#ph-aeration"/></svg><span>Aer</span><span style="font-size:9px;background:rgba(255,255,255,0.2);padding:1px 5px;border-radius:999px;">2/2</span></div>
+                    </div>
+                    <!-- Cedar Ave: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Birch Ln: done -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-done" title="Aeration done"><svg width="12" height="12" style="color:#999"><use href="#ph-aeration"/></svg><span>✓</span></div>
+                    </div>
+                    <!-- Pine Cres: urgent -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-urgent" title="URGENT — Friday no crew"><svg width="12" height="12" style="color:#C58D2C"><use href="#ph-aeration"/></svg><span>Aer</span><span style="font-size:9px;font-weight:700;">!</span></div>
+                    </div>
+                    <!-- Elm Way: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-fertilizing"/></svg><span>Fert</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Oak St: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Willow Dr: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-seeding"/></svg><span>Seed</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                  </div>
+
+                  <!-- WK May 8 column -->
+                  <div class="tl-week-col">
+                    <div class="tl-axis-cell">Wk May 8</div>
+                    <!-- Maple St: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Cedar Ave: awaiting -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-awaiting"><svg width="12" height="12" style="color:#0A5746"><use href="#ph-aeration"/></svg><span>Aer</span><span style="font-size:9px;">0/2</span></div>
+                    </div>
+                    <!-- Birch Ln: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Pine Cres: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Elm Way: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Oak St: claimed -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-claimed"><svg width="12" height="12" style="color:#FFF"><use href="#ph-fertilizing"/></svg><span>Fert</span><span style="font-size:9px;background:rgba(255,255,255,0.2);padding:1px 5px;border-radius:999px;">1/1</span></div>
+                    </div>
+                    <!-- Willow Dr: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                  </div>
+
+                  <!-- WK May 15 column -->
+                  <div class="tl-week-col">
+                    <div class="tl-axis-cell">Wk May 15</div>
+                    <!-- Maple St: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-seeding"/></svg><span>Seed</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Cedar Ave: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Birch Ln: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-seeding"/></svg><span>Seed</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Pine Cres: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-seeding"/></svg><span>Seed</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Elm Way: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-overseeding"/></svg><span>Over</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Oak St: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Willow Dr: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-fertilizing"/></svg><span>Fert</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                  </div>
+
+                  <!-- WK May 22 column -->
+                  <div class="tl-week-col">
+                    <div class="tl-axis-cell">Wk May 22</div>
+                    <!-- Maple St: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Cedar Ave: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-fertilizing"/></svg><span>Fert</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Birch Ln: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Pine Cres: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Elm Way: unposted -->
+                    <div class="tl-clip-row">
+                      <div class="tl-clip tl-clip-unposted"><svg width="12" height="12" style="color:#777"><use href="#ph-overseeding"/></svg><span>Over</span><span style="font-size:9px;">+</span></div>
+                    </div>
+                    <!-- Oak St: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                    <!-- Willow Dr: empty -->
+                    <div class="tl-clip-row"><div class="tl-clip tl-clip-empty"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 10px; color: var(--ink-muted);">
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 8px; background: var(--paper-2); border: 1px dashed #999; border-radius: 3px;"></span>Unposted</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 8px; background: var(--teal-tint); border: 0.5px solid var(--teal); border-radius: 3px;"></span>Awaiting crew</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 8px; background: #FFF3E0; border: 1px solid #C58D2C; border-radius: 3px;"></span>Urgent</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 14px; height: 8px; background: var(--teal); border-radius: 3px;"></span>Claimed</span>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="#0E6D55"/><path d="M3 9 H19" stroke="#FFF" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== Screen 4: Schedule · Week (vertical list, default view) ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 4</span>
+        <h2>Schedule · Week</h2>
+        <p>The default Schedule view. Vertical list grouped by week, all 5 card states visible: <strong>Urgent</strong> (orange, Friday-no-crew — tap to self-assign), <strong>Unposted</strong> (calm gray, needs admin to post), <strong>Awaiting crew</strong> (teal-tint, posted with time still on the clock), <strong>Claimed</strong> (avatars + day/time), <strong>Done</strong> (muted ✓). Sorted top-to-bottom by urgency.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="title-row">
+              <h2 class="h-2">Schedule</h2>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 2 L8 6 L4 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <span class="subline">Next 4 weeks · 1 urgent · 3 to post</span>
+          </div>
+
+          <!-- 3-pill toggle: Timeline | Week | Month (Week active) -->
+          <div class="pad-x" style="padding-bottom: 18px; display: flex; justify-content: flex-end;">
+            <div class="seg3">
+              <button>Timeline</button>
+              <button class="on">Week</button>
+              <button>Month</button>
+            </div>
+          </div>
+
+          <!-- THIS WEEK -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card today-card" style="padding: 4px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0 4px;">
+                <div>
+                  <span style="font-size: 14px; font-weight: 700;">This week · May 1 – 5</span>
+                  <span class="pill-now" style="margin-left: 8px;"><span class="pill-now-text">NOW</span></span>
+                </div>
+              </div>
+              <div style="padding: 0 0 8px;">
+                <span class="section-eyebrow" style="font-size: 10px;">1 urgent · 2 to post · 1 awaiting · 1 claimed · 1 done</span>
+              </div>
+
+              <!-- 1. URGENT: Pine Cres -->
+              <div class="row-clean">
+                <div class="icon-bubble ib-urgent">
+                  <svg width="14" height="14"><use href="#ph-aeration"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--ink);">Pine Cres</div>
+                  <div style="font-size: 10px; color: #C58D2C; font-weight: 700; letter-spacing: 0.4px; margin-top: 1px;">URGENT · FRIDAY · AERATION</div>
+                </div>
+                <button class="urgent-btn">+ Self-assign</button>
+              </div>
+
+              <!-- 2. UNPOSTED: Elm Way -->
+              <div class="row-clean">
+                <div class="icon-bubble ib-gray">
+                  <svg width="14" height="14"><use href="#ph-fertilizing"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Elm Way</div>
+                  <div style="font-size: 10px; color: var(--ink-muted); font-weight: 600; letter-spacing: 0.4px; margin-top: 1px;">FERTILIZING · TO POST</div>
+                </div>
+                <button class="assign-btn">+ Post</button>
+              </div>
+
+              <!-- 3. UNPOSTED: Willow Dr -->
+              <div class="row-clean">
+                <div class="icon-bubble ib-gray">
+                  <svg width="14" height="14"><use href="#ph-seeding"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Willow Dr</div>
+                  <div style="font-size: 10px; color: var(--ink-muted); font-weight: 600; letter-spacing: 0.4px; margin-top: 1px;">SEEDING · TO POST</div>
+                </div>
+                <button class="assign-btn">+ Post</button>
+              </div>
+
+              <!-- 4. AWAITING CREW: Maple St -->
+              <div class="row-clean">
+                <div class="icon-bubble ib-await">
+                  <svg width="14" height="14"><use href="#ph-aeration"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Maple St</div>
+                  <div style="font-size: 10px; color: var(--teal-deep); font-weight: 600; margin-top: 1px;">Aeration · Awaiting crew · 2 days left</div>
+                </div>
+                <span style="font-size: 10px; color: var(--ink-muted); font-weight: 600;">0/2</span>
+              </div>
+
+              <!-- 5. CLAIMED: Cedar Ave -->
+              <div class="row-clean">
+                <div class="icon-bubble ib-claimed">
+                  <svg width="14" height="14"><use href="#ph-aeration"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Cedar Ave</div>
+                  <div style="font-size: 10px; color: var(--ink-muted); font-weight: 600; margin-top: 1px;">Aeration · Wed 11am · 1/2</div>
+                </div>
+                <div class="cc cc-mr">MR</div>
+              </div>
+
+              <!-- 6. DONE: Oak St -->
+              <div class="row-clean" style="opacity: 0.55; padding-bottom: 14px;">
+                <div class="icon-bubble ib-done">
+                  <svg width="14" height="14"><use href="#ph-aeration"/></svg>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: line-through; text-decoration-color: #BBB;">Oak St</div>
+                  <div style="font-size: 10px; color: var(--ink-muted); font-weight: 600; margin-top: 1px;">Aeration · Mon · MR · 47 min</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="#0E6D55"/><path d="M4 7 L6 9 L10 5" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEXT WEEK (collapsed summary) -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card" style="padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 700;">Next week · May 8 – 12</span>
+                <span style="font-size: 11px; color: var(--ink-muted); font-weight: 600;">7 cards · 6 to post</span>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">Tap to expand</div>
+            </div>
+          </div>
+
+          <!-- WK OF MAY 15 -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card" style="padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 700;">Wk of May 15</span>
+                <span style="font-size: 11px; color: var(--ink-muted); font-weight: 600;">6 cards</span>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">Tap to expand</div>
+            </div>
+          </div>
+
+          <!-- WK OF MAY 22 -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div class="card" style="padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 700;">Wk of May 22</span>
+                <span style="font-size: 11px; color: var(--ink-muted); font-weight: 600;">5 cards</span>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">Tap to expand</div>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="#0E6D55"/><path d="M3 9 H19" stroke="#FFF" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== Screen 5: Schedule · Month (calendar that drills into Week) ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 5</span>
+        <h2>Schedule · Month</h2>
+        <p>Calendar at season-glance scale, also a navigation tool. <strong>Past dates</strong> show a solid teal bar = day cleared. <strong>Today</strong> is the teal circle. <strong>Future dates</strong> show small dots reflecting that day's worst card state (gray = unposted somewhere, orange = urgent). Tap a week row to drill into the Week list filtered to that range.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="title-row">
+              <h2 class="h-2">Schedule</h2>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button style="background: transparent; border: 0.5px solid var(--border); border-radius: 50%; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 2 L8 6 L4 10" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <span class="subline">May 2026 · tap a week to drill in</span>
+          </div>
+
+          <!-- 3-pill toggle: Timeline | Week | Month (Month active) -->
+          <div class="pad-x" style="padding-bottom: 18px; display: flex; justify-content: flex-end;">
+            <div class="seg3">
+              <button>Timeline</button>
+              <button>Week</button>
+              <button class="on">Month</button>
+            </div>
+          </div>
+
+          <!-- day-of-week labels -->
+          <div style="padding: 0 14px 8px;">
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
+              <div class="dayHd">Mon</div><div class="dayHd">Tue</div><div class="dayHd">Wed</div><div class="dayHd">Thu</div><div class="dayHd">Fri</div><div class="dayHd">Sat</div><div class="dayHd">Sun</div>
+            </div>
+          </div>
+
+          <!-- month grid -->
+          <div style="padding: 0 14px 14px;">
+            <div class="monthGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); background: #FFF; border: 0.5px solid var(--border); border-radius: 14px; overflow: hidden;">
+              <!-- week 1: past + today + future this week (selected for drill-in) -->
+              <div class="cell weekRowActive"><span class="cellDate">1</span><div class="bar barFull"></div></div>
+              <div class="cell weekRowActive"><span class="cellDate">2</span><div class="bar barFull"></div></div>
+              <div class="cell cellTd weekRowActive"><span class="cellDate">3</span><div class="bar barUrgent"></div></div>
+              <div class="cell weekRowActive"><span class="cellDate">4</span><div class="bar barGray"></div></div>
+              <div class="cell weekRowActive"><span class="cellDate">5</span><div class="bar barGray"></div></div>
+              <div class="cell cellWknd weekRowActive"><span class="cellDate">6</span></div>
+              <div class="cell cellWknd weekRowActive"><span class="cellDate">7</span></div>
+              <!-- week 2: future, several unposted (gray dots) -->
+              <div class="cell"><span class="cellDate">8</span><div class="bar barGray"></div></div>
+              <div class="cell"><span class="cellDate">9</span></div>
+              <div class="cell"><span class="cellDate">10</span><div class="bar barGray"></div></div>
+              <div class="cell"><span class="cellDate">11</span></div>
+              <div class="cell"><span class="cellDate">12</span><div class="bar barGray"></div></div>
+              <div class="cell cellWknd"><span class="cellDate">13</span></div>
+              <div class="cell cellWknd"><span class="cellDate">14</span></div>
+              <!-- week 3 -->
+              <div class="cell"><span class="cellDate">15</span><div class="bar barGray"></div></div>
+              <div class="cell"><span class="cellDate">16</span></div>
+              <div class="cell"><span class="cellDate">17</span><div class="bar barGray"></div></div>
+              <div class="cell"><span class="cellDate">18</span></div>
+              <div class="cell"><span class="cellDate">19</span></div>
+              <div class="cell cellWknd"><span class="cellDate">20</span></div>
+              <div class="cell cellWknd"><span class="cellDate">21</span></div>
+              <!-- week 4 -->
+              <div class="cell"><span class="cellDate">22</span></div>
+              <div class="cell"><span class="cellDate">23</span><div class="bar barGray"></div></div>
+              <div class="cell"><span class="cellDate">24</span></div>
+              <div class="cell"><span class="cellDate">25</span></div>
+              <div class="cell"><span class="cellDate">26</span></div>
+              <div class="cell cellWknd"><span class="cellDate">27</span></div>
+              <div class="cell cellWknd"><span class="cellDate">28</span></div>
+              <!-- week 5 -->
+              <div class="cell"><span class="cellDate">29</span></div>
+              <div class="cell"><span class="cellDate">30</span></div>
+              <div class="cell"><span class="cellDate">31</span></div>
+              <div class="cell cellOff"><span class="cellDate">1</span></div>
+              <div class="cell cellOff"><span class="cellDate">2</span></div>
+              <div class="cell cellOff"><span class="cellDate">3</span></div>
+              <div class="cell cellOff"><span class="cellDate">4</span></div>
+            </div>
+          </div>
+
+          <!-- Week-tap drill-in hint -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--teal-tint); border-radius: 12px;">
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 7 L11 7 M8 4 L11 7 L8 10" stroke="#0A5746" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              <span style="font-size: 11px; color: var(--teal-deep); font-weight: 600; flex: 1;">Wk of May 1 selected · tap any week row to open in Week view</span>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 10px; color: var(--ink-muted);">
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="width: 16px; height: 4px; background: var(--teal); border-radius: 999px;"></div>
+                <span>Cleared</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="width: 16px; height: 4px; background: #999; opacity: 0.45; border-radius: 999px;"></div>
+                <span>Unposted</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="width: 16px; height: 4px; background: #C58D2C; border-radius: 999px;"></div>
+                <span>Urgent</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="width: 12px; height: 12px; background: var(--teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FFF; font-size: 7px; font-weight: 700;">3</div>
+                <span>Today</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="#0E6D55"/><path d="M3 9 H19" stroke="#FFF" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<style>
+/* Month-grid utilities (used in screen 4) */
+.dayHd { font-size: 9px; font-weight: 700; color: #999; text-align: center; letter-spacing: 0.5px; padding: 6px 0; text-transform: uppercase; }
+.cell { aspect-ratio: 1 / 1.08; display: flex; flex-direction: column; align-items: center; padding: 9px 4px 11px; justify-content: space-between; }
+.cellDate { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1; }
+.cellOff .cellDate { color: #BBB; font-weight: 500; }
+.cellWknd .cellDate { color: #999; }
+.cellTd { padding: 5px 4px 11px; }
+.cellTd .cellDate { width: 24px; height: 24px; background: var(--teal); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.bar { width: 28px; height: 5px; border-radius: 999px; }
+.barFull { background: var(--teal); }
+.barEmpty { background: var(--border); }
+.barGray { background: #999; opacity: 0.45; }
+.barUrgent { background: #C58D2C; }
+.barHalf { background: var(--paper-2); overflow: hidden; }
+.barHalfFill { width: 50%; height: 100%; background: #C58D2C; }
+/* Month grid week-row highlight (selected/current week with active drill-in) */
+.monthGrid { position: relative; }
+.weekRowActive { box-shadow: inset 2px 0 0 var(--teal); }
+</style>
+
+<!-- ============================================================ -->
+<!-- PHASE 03 — PEOPLE                                            -->
+<!-- ============================================================ -->
+<section class="phase" id="p3">
+  <div class="phase-header">
+    <span class="phase-num">03</span>
+    <h2 class="phase-title">People</h2>
+    <span class="phase-count">2 screens</span>
+  </div>
+  <div class="grid">
+
+    <!-- ===== Screen 6: Crew ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 6</span>
+        <h2>Crew</h2>
+        <p>Self-signups gate here. The pending application card has a 1.5px lime border + NEW APPLICATION pill so it can't be missed; Approve is the primary CTA, Reject is a quiet outline. Active crew below — avatar color encodes their identity (lime = Marcus the most-used), with their week-load and pay-to-date.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <h2 class="h-2" style="margin-bottom: 4px;">Crew</h2>
+            <span class="subline">4 active · 1 pending approval</span>
+          </div>
+
+          <!-- Pending approval -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Pending approval</span></div>
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <div class="card" style="border: 1.5px solid var(--lime); padding: 16px; position: relative;">
+              <span class="pill-lime" style="position: absolute; top: -9px; left: 16px;">NEW APPLICATION</span>
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-top: 4px;">
+                <div style="width: 44px; height: 44px; background: var(--teal-tint); color: var(--teal-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;">TR</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 15px; font-weight: 700;">Tasha Rivera</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">Applied 2 days ago</div>
+                </div>
+              </div>
+              <div class="card-sm" style="padding: 4px 14px; border-radius: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border-soft);">
+                  <svg width="14" height="14" viewBox="0 0 14 14"><rect x="2" y="3" width="10" height="8" rx="1.2" fill="none" stroke="#777" stroke-width="1.3"/><path d="M2.5 3.7 L7 7.4 L11.5 3.7" stroke="#777" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>
+                  <span style="font-size: 12px; color: var(--ink); font-weight: 500;">tasha.r@gmail.com</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border-soft);">
+                  <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 4 C 3 3, 3.5 2.5, 4.5 2.5 L 6 2.5 L 7 5.5 L 5.5 6.5 C 6.5 8.5, 7.5 9.5, 9.5 10.5 L 10.5 9 L 13.5 10 L 13.5 11.5 C 13.5 12.5, 13 13, 12 13 C 7 13, 3 9, 3 4 Z" fill="none" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  <span style="font-size: 12px; color: var(--ink); font-weight: 500;">(807) 555-0398</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0;">
+                  <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 5 L7 2 L12 5 L7 8 Z" fill="none" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 7 V10 C 4 11, 5.5 11.5, 7 11.5 C 8.5 11.5, 10 11, 10 10 V 7" fill="none" stroke="#777" stroke-width="1.3" stroke-linecap="round"/></svg>
+                  <span style="font-size: 12px; color: var(--ink); font-weight: 500;">3 seasons landscaping</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button style="background: transparent; color: var(--ink); border: 0.5px solid var(--border); border-radius: 999px; padding: 10px 18px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Reject</button>
+                <button style="flex: 1; background: var(--teal); color: #FFF; border: none; border-radius: 999px; padding: 11px 24px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">Approve</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active crew -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Active crew · 4</span></div>
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <div class="card-sm" style="padding: 4px 16px;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MR</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 700;">Marcus Reid</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">6 jobs this week · $288</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--teal-tint); color: var(--teal-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">JP</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 700;">Jordan Park</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">4 jobs this week · $192</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--paper-2); color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SC</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 700;">Sam Chen</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">3 jobs this week · $144</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0;">
+                <div style="width: 38px; height: 38px; background: var(--paper-2); color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">PL</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 700;">Pete Larsson</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">3 jobs this week · $144</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 22px; text-align: center;">
+            <span style="font-size: 12px; color: var(--teal-deep); font-weight: 600;">+ Invite a crew member</span>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 9 H19" stroke="#888" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="#0E6D55"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="#0E6D55" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== Screen 7: Customers ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 7</span>
+        <h2>Customers</h2>
+        <p>Searchable list, filterable by status. Avatar color encodes the relationship — lime for active subscriptions, teal-tint for paused, paper for one-times — so the secondary line stays clean prose. Tap a row to drill into the customer detail (Screen 8).</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <h2 class="h-2" style="margin-bottom: 4px;">Customers</h2>
+            <span class="subline">35 customers · 24 active subscriptions</span>
+          </div>
+
+          <!-- Search -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div style="background: #FFF; border: 0.5px solid var(--border); border-radius: 999px; padding: 10px 16px; display: flex; align-items: center; gap: 10px;">
+              <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M11 11 L14 14" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span style="font-size: 13px; color: #999;">Search by name or address</span>
+            </div>
+          </div>
+
+          <!-- Filter chips -->
+          <div class="pad-x" style="padding-bottom: 18px; display: flex; gap: 6px; overflow-x: auto;">
+            <button style="background: var(--teal-tint); color: var(--teal-deep); border: none; border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap;">All · 35</button>
+            <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap;">Active · 24</button>
+            <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap;">Paused · 3</button>
+            <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap;">One-time · 8</button>
+          </div>
+
+          <!-- Customer rows -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div class="card" style="padding: 4px 16px;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">SM</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Sarah Mitchell</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">412 Maple St · Next visit Wed May 7</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">AT</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Anna Tomlinson</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">78 Cedar Ave · Next visit Thu May 8</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">PL</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Paul Larson</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">21 Birch Rd · Next visit Thu May 8</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--teal-tint); color: var(--teal-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">BJ</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Ben Jackson</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">88 Birch Ln · Paused · resumes May 20</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">GH</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Greg Henson</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">145 Oak St · Next visit Fri May 9</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--paper-2); color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">LD</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Lucas Davies</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">71 Pine Way · One-time · last Apr 21</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="width: 38px; height: 38px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">KM</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">Karen Morton</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">312 Willow Dr · Next visit Mon May 12</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0;">
+                <div style="width: 38px; height: 38px; background: var(--paper-2); color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">DR</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">David Roberts</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">18 Elm St · One-time · last Mar 15</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0;"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 9 H19" stroke="#888" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="#0E6D55"/><circle cx="15" cy="9" r="2.5" fill="#0E6D55"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="#0E6D55" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="#0E6D55" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PHASE 04 — DRILL-INS                                         -->
+<!-- ============================================================ -->
+<section class="phase" id="p4">
+  <div class="phase-header">
+    <span class="phase-num">04</span>
+    <h2 class="phase-title">Drill-ins</h2>
+    <span class="phase-count">2 screens</span>
+  </div>
+  <div class="grid">
+
+    <!-- ===== Screen 8: Post job card drill-in ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 8</span>
+        <h2>Post job card</h2>
+        <p>Drilled in from a row's <em>+ Post</em> pill. Lia configures the auto-generated bi-weekly card: which <strong>phase</strong> of the 16-visit program (a trade secret only crew + admin see), <strong>max crew slots</strong>, and whether they should <strong>go together</strong>. Crew then claim the card from their Pending tab and pick their own time within the week.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi" style="padding-bottom: 10px;">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Back to schedule</span>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 18px;">
+            <h2 class="h-2" style="line-height: 1.15; margin-bottom: 4px;">Pine Crescent</h2>
+            <span class="subline">Wednesday, May 3</span>
+          </div>
+
+          <!-- Property card -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                <span style="font-size: 14px; font-weight: 700;">23 Pine Cres</span>
+                <span style="font-size: 11px; color: var(--ink-muted); font-weight: 600;">Visit 4 of 16</span>
+              </div>
+              <div style="font-size: 12px; color: var(--ink-muted);">Henry Wallace · Lawn care (bi-weekly)</div>
+            </div>
+          </div>
+
+          <!-- Customer note -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Note from Henry</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-sm" style="padding: 12px 14px;">
+              <p style="font-size: 13px; color: #444; line-height: 1.5; margin: 0; font-style: italic;">"Side gate is unlocked. Mower is in the shed if you need a backup. Watch out for the bird feeder by the back door."</p>
+            </div>
+          </div>
+
+          <!-- Program phase selector -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Program phase · auto-suggested · tap to change</span></div>
+          <div class="pad-x" style="padding-bottom: 6px;">
+            <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;">
+              <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #555;"><use href="#ph-raking"/></svg>Raking</button>
+              <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #555;"><use href="#ph-leafblow"/></svg>Leaf blow &amp; bag</button>
+              <button style="background: var(--teal); color: #FFF; border: none; border-radius: 999px; padding: 7px 12px 7px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #FFF;"><use href="#ph-aeration"/></svg>Aeration</button>
+              <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #555;"><use href="#ph-seeding"/></svg>Seeding</button>
+              <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #555;"><use href="#ph-fertilizing"/></svg>Fertilizing</button>
+              <button style="background: transparent; color: #555; border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 10px 6px 8px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;"><svg width="13" height="13" style="color: #555;"><use href="#ph-overseeding"/></svg>Over-seeding</button>
+            </div>
+          </div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <span style="font-size: 10px; color: var(--ink-muted); font-style: italic;">Trade secret · only crew + admin see this</span>
+          </div>
+
+          <!-- Capacity card -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Capacity</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 4px 16px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 13px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div>
+                  <div style="font-size: 13px; font-weight: 600;">Max crew</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">How many can claim this card</div>
+                </div>
+                <div style="display: flex; align-items: center; background: var(--paper-2); border: 0.5px solid var(--border); border-radius: 999px; padding: 2px;">
+                  <button style="width: 26px; height: 26px; background: transparent; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: 600; color: #555; font-family: inherit;">−</button>
+                  <span style="min-width: 22px; text-align: center; font-size: 14px; font-weight: 700;">2</span>
+                  <button style="width: 26px; height: 26px; background: #FFF; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: 600; color: var(--teal-deep); font-family: inherit; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">+</button>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 13px 0;">
+                <div>
+                  <div style="font-size: 13px; font-weight: 600;">Crew should go together</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">Both arrive on the same day</div>
+                </div>
+                <div style="width: 44px; height: 26px; background: var(--teal); border-radius: 999px; position: relative; flex-shrink: 0;">
+                  <div style="position: absolute; top: 2px; left: 20px; width: 22px; height: 22px; background: #FFF; border-radius: 50%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pay per crew -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 16px;">
+              <span class="section-eyebrow">Pay per crew</span>
+              <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 10px;">
+                <span style="font-size: 22px; color: var(--teal); font-weight: 700;">$</span>
+                <span style="font-size: 32px; font-weight: 700; color: var(--teal); letter-spacing: -0.6px;">48</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" style="margin-left: 8px;"><path d="M9 2.5 L11.5 5 L5 11.5 L2.5 11.5 L2.5 9 Z" fill="none" stroke="#777" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-muted); margin-top: 8px;">Subscription rate · tap to edit</div>
+            </div>
+          </div>
+
+          <!-- Status pill -->
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <span style="display: inline-flex; align-items: center; gap: 5px; background: var(--teal-tint); padding: 4px 10px; border-radius: 999px; font-size: 10px; color: var(--teal-deep); font-weight: 700; letter-spacing: 0.4px;"><span style="width: 5px; height: 5px; background: var(--teal); border-radius: 50%;"></span>0 OF 2 SLOTS FILLED · AWAITING CREW</span>
+          </div>
+
+          <!-- CTA -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <button style="width: 100%; background: var(--teal); color: #FFF; border: none; border-radius: 999px; padding: 16px 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;">Post job card</button>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="#0E6D55"/><path d="M3 9 H19" stroke="#FFF" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><circle cx="15" cy="9" r="2.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== Screen 9: Customer detail drill-in ===== -->
+    <article class="screen-card">
+      <div class="caption">
+        <span class="step">SCREEN 9</span>
+        <h2>Customer detail</h2>
+        <p>Drilled in from a customer row. Big lime avatar + status line. Contact rows tap to email/call. Properties shown with the same isometric house illustrations the customer picked at sign-up. Recent activity stack — date, crew, property — for quick relationship context. Lean by design — no lifetime-value chrome.</p>
+      </div>
+      <div class="phone-bezel">
+        <div class="phone-screen">
+          <div class="sb">
+            <span>9:41</span>
+            <span class="sb-icons">
+              <svg width="14" height="9" viewBox="0 0 14 9"><rect x="0" y="6" width="2" height="3" rx="0.5" fill="#1A1A1A"/><rect x="3" y="4" width="2" height="5" rx="0.5" fill="#1A1A1A"/><rect x="6" y="2" width="2" height="7" rx="0.5" fill="#1A1A1A"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="#1A1A1A"/></svg>
+              <svg width="14" height="9" viewBox="0 0 14 9"><path d="M7 1 C 4 1, 2 2.5, 0.5 4 L 7 9 L 13.5 4 C 12 2.5, 10 1, 7 1 Z" fill="#1A1A1A"/></svg>
+              <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="19" height="9" rx="2" fill="none" stroke="#1A1A1A" stroke-width="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="#1A1A1A"/></svg>
+            </span>
+          </div>
+          <div class="hi" style="padding-bottom: 10px;">
+            <span class="hi-text">Hi Lia!</span>
+            <div class="av-lime">LR</div>
+          </div>
+          <div class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 3 L4 7 L9 11" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Back to customers</span>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+            <div style="width: 56px; height: 56px; background: var(--lime); color: var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700;">SM</div>
+            <div style="flex: 1;">
+              <h2 style="font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.4px; line-height: 1.15;">Sarah Mitchell</h2>
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                <div style="width: 6px; height: 6px; background: var(--teal); border-radius: 50%;"></div>
+                <span style="font-size: 12px; color: var(--teal-deep); font-weight: 600;">Lawn care (bi-weekly)</span>
+                <span style="font-size: 12px; color: var(--ink-muted);">·</span>
+                <span style="font-size: 12px; color: var(--ink-muted);">since Mar 15</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Program track -->
+          <div class="eyebrow-row" style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span class="section-eyebrow">Program · 16 visits</span>
+            <span style="font-size: 10px; color: var(--ink-muted); font-weight: 600;">Visit 5 of 16 · Aeration this week</span>
+          </div>
+          <div class="pad-x" style="padding-bottom: 8px;">
+            <div style="display: flex; gap: 2px; align-items: stretch; padding: 4px 0;">
+              <!-- 1: done · Raking -->
+              <div class="ptrack-cell ptrack-done" title="Visit 1 · Raking · Done Mar 19"><svg width="12" height="12"><use href="#ph-raking"/></svg></div>
+              <!-- 2: done · Raking -->
+              <div class="ptrack-cell ptrack-done" title="Visit 2 · Raking · Done Apr 2"><svg width="12" height="12"><use href="#ph-raking"/></svg></div>
+              <!-- 3: done · Leaf blow -->
+              <div class="ptrack-cell ptrack-done" title="Visit 3 · Leaf blowing · Done Apr 16"><svg width="12" height="12"><use href="#ph-leafblow"/></svg></div>
+              <!-- 4: done · Leaf blow -->
+              <div class="ptrack-cell ptrack-done" title="Visit 4 · Leaf blowing · Done Apr 30"><svg width="12" height="12"><use href="#ph-leafblow"/></svg></div>
+              <!-- 5: this week · Aeration -->
+              <div class="ptrack-cell ptrack-now" title="Visit 5 · Aeration · This week"><svg width="12" height="12"><use href="#ph-aeration"/></svg></div>
+              <!-- 6: posted no claims · Aeration -->
+              <div class="ptrack-cell ptrack-posted" title="Visit 6 · Aeration · Posted, awaiting claim"><svg width="12" height="12"><use href="#ph-aeration"/></svg></div>
+              <!-- 7: unposted · Seeding -->
+              <div class="ptrack-cell ptrack-unposted" title="Visit 7 · Seeding · Tap to post"><svg width="12" height="12"><use href="#ph-seeding"/></svg></div>
+              <!-- 8: unposted · Seeding -->
+              <div class="ptrack-cell ptrack-unposted" title="Visit 8 · Seeding · Tap to post"><svg width="12" height="12"><use href="#ph-seeding"/></svg></div>
+              <!-- 9: future · Fertilizing -->
+              <div class="ptrack-cell ptrack-future" title="Visit 9 · Fertilizing"><svg width="12" height="12"><use href="#ph-fertilizing"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 10 · Fertilizing"><svg width="12" height="12"><use href="#ph-fertilizing"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 11 · Over-seeding"><svg width="12" height="12"><use href="#ph-overseeding"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 12 · Over-seeding"><svg width="12" height="12"><use href="#ph-overseeding"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 13 · Fertilizing"><svg width="12" height="12"><use href="#ph-fertilizing"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 14 · Fertilizing"><svg width="12" height="12"><use href="#ph-fertilizing"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 15 · Over-seeding"><svg width="12" height="12"><use href="#ph-overseeding"/></svg></div>
+              <div class="ptrack-cell ptrack-future" title="Visit 16 · Raking"><svg width="12" height="12"><use href="#ph-raking"/></svg></div>
+            </div>
+          </div>
+
+          <!-- Track tap-state preview (Aeration label floating below current cell) -->
+          <div class="pad-x" style="padding-bottom: 6px; position: relative; height: 22px;">
+            <div style="position: absolute; left: calc(22px + 4*22px + 2px); top: -2px; background: var(--ink); color: #FFF; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">Aeration · this week
+              <div style="position: absolute; top: -4px; left: 14px; width: 8px; height: 8px; background: var(--ink); transform: rotate(45deg);"></div>
+            </div>
+          </div>
+
+          <!-- Track legend -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 10px; color: var(--ink-muted);">
+              <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--teal); border-radius: 2px;"></span>Done</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--teal); border-radius: 2px; box-shadow: inset 0 2px 0 var(--lime);"></span>This week</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--teal-tint); border: 0.5px solid var(--teal); border-radius: 2px;"></span>Posted</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: transparent; border: 1px dashed #999; border-radius: 2px;"></span>Unposted</span>
+            </div>
+          </div>
+
+          <!-- Contact card -->
+          <div class="pad-x" style="padding-bottom: 22px;">
+            <div class="card-sm" style="padding: 4px 16px;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="9" rx="1.5" fill="none" stroke="#0E6D55" stroke-width="1.4"/><path d="M2.5 4.5 L8 9 L13.5 4.5" stroke="#0E6D55" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                <span style="font-size: 13px; font-weight: 500; flex: 1;">sarah.m@gmail.com</span>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 4 C 3 3, 3.5 2.5, 4.5 2.5 L 6 2.5 L 7 5.5 L 5.5 6.5 C 6.5 8.5, 7.5 9.5, 9.5 10.5 L 10.5 9 L 13.5 10 L 13.5 11.5 C 13.5 12.5, 13 13, 12 13 C 7 13, 3 9, 3 4 Z" fill="none" stroke="#0E6D55" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                <span style="font-size: 13px; font-weight: 500; flex: 1;">(807) 555-0142</span>
+                <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Properties -->
+          <div class="eyebrow-row"><span class="section-eyebrow">Properties · 2</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-md" style="padding: 14px 16px; display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+              <div style="width: 52px; height: 52px; background: var(--paper-2); border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg viewBox="0 0 100 100" width="44" height="44">
+                  <ellipse cx="50" cy="82" rx="42" ry="10" fill="#A8CC8C"/>
+                  <ellipse cx="50" cy="80" rx="42" ry="10" fill="#8FB871"/>
+                  <polygon points="22,72 50,81 50,42 22,33" fill="#F5F2EC"/>
+                  <polygon points="50,81 78,72 78,33 50,42" fill="#DDD8CD"/>
+                  <polygon points="22,33 50,42 50,28 22,19" fill="#A0432F"/>
+                  <polygon points="50,42 78,33 78,19 50,28" fill="#7E331F"/>
+                  <polygon points="22,33 50,28 78,33 50,38" fill="#5C2516"/>
+                  <rect x="40" y="63" width="5" height="9" fill="#5A4A30"/>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 700;">Maple Street home</div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 1px;">412 Maple St</div>
+                <div style="font-size: 11px; color: var(--teal-deep); font-weight: 600; margin-top: 4px;">Lawn care (bi-weekly) · Visit 4 of 16 · Next Wed May 7</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+
+            <div class="card-md" style="padding: 14px 16px; display: flex; gap: 12px; align-items: center;">
+              <div style="width: 52px; height: 52px; background: var(--paper-2); border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg viewBox="0 0 100 100" width="44" height="44">
+                  <ellipse cx="50" cy="82" rx="36" ry="8" fill="#A8CC8C"/>
+                  <ellipse cx="50" cy="80" rx="36" ry="8" fill="#8FB871"/>
+                  <polygon points="28,73 50,80 50,55 28,48" fill="#F5E8D0"/>
+                  <polygon points="50,80 72,73 72,48 50,55" fill="#DFCBB0"/>
+                  <polygon points="28,48 50,55 50,30 28,23" fill="#7E331F"/>
+                  <polygon points="50,55 72,48 72,23 50,30" fill="#5C2516"/>
+                  <polygon points="28,23 50,18 50,30" fill="#A0432F"/>
+                  <polygon points="50,18 72,23 50,30" fill="#7E331F"/>
+                  <rect x="42" y="63" width="6" height="10" fill="#5A4A30"/>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 700;">Cabin</div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 1px;">88 Lakeside Rd</div>
+                <div style="font-size: 11px; color: var(--ink-muted); font-weight: 600; margin-top: 4px;">One-time · last visit Apr 15</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M5 3 L9 7 L5 11" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Recent activity -->
+          <div class="eyebrow-row" style="padding-top: 14px;"><span class="section-eyebrow">Recent activity</span></div>
+          <div class="pad-x" style="padding-bottom: 14px;">
+            <div class="card-sm" style="padding: 4px 16px;">
+              <div style="padding: 11px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600;">Apr 30</span>
+                  <span style="font-size: 11px; color: var(--ink-muted);">Marcus &amp; Tasha</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px; display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;">Maple Street home · <span style="display: inline-flex; align-items: center; gap: 3px; color: var(--teal-deep); font-weight: 600;"><svg width="11" height="11" style="color: var(--teal-deep);"><use href="#ph-aeration"/></svg>Aeration</span></div>
+              </div>
+              <div style="padding: 11px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600;">Apr 16</span>
+                  <span style="font-size: 11px; color: var(--ink-muted);">Marcus</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px; display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;">Maple Street home · <span style="display: inline-flex; align-items: center; gap: 3px; color: var(--teal-deep); font-weight: 600;"><svg width="11" height="11" style="color: var(--teal-deep);"><use href="#ph-fertilizing"/></svg>Fertilizing</span></div>
+              </div>
+              <div style="padding: 11px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600;">Apr 15</span>
+                  <span style="font-size: 11px; color: var(--ink-muted);">Jordan</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px;">Cabin · <em style="color: var(--teal-deep); font-weight: 600;">One-time mow</em></div>
+              </div>
+              <div style="padding: 11px 0; border-bottom: 0.5px solid var(--border-soft);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600;">Apr 2</span>
+                  <span style="font-size: 11px; color: var(--ink-muted);">Marcus &amp; Tasha</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px; display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;">Maple Street home · <span style="display: inline-flex; align-items: center; gap: 3px; color: var(--teal-deep); font-weight: 600;"><svg width="11" height="11" style="color: var(--teal-deep);"><use href="#ph-seeding"/></svg>Seeding</span></div>
+              </div>
+              <div style="padding: 11px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <span style="font-size: 13px; font-weight: 600;">Mar 19</span>
+                  <span style="font-size: 11px; color: var(--ink-muted);">Marcus</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 2px; display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;">Maple Street home · <span style="display: inline-flex; align-items: center; gap: 3px; color: var(--teal-deep); font-weight: 600;"><svg width="11" height="11" style="color: var(--teal-deep);"><use href="#ph-raking"/></svg>Raking</span> · first visit</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pad-x" style="padding-bottom: 22px; text-align: center;">
+            <span style="font-size: 12px; color: var(--teal-deep); font-weight: 600;">See all activity</span>
+          </div>
+
+          <div class="bnav">
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1" fill="none" stroke="#888" stroke-width="1.5"/></svg>
+              <span class="bnav-label">Home</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#888" stroke-width="1.5"/><path d="M3 9 H19" stroke="#888" stroke-width="1.5"/><path d="M7 3 V6 M15 3 V6" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Schedule</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="8" cy="8" r="3" fill="#0E6D55"/><circle cx="15" cy="9" r="2.5" fill="#0E6D55"/><path d="M3 18 C 3 14.5, 5 13, 8 13 C 11 13, 13 14.5, 13 18" fill="#0E6D55" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/><path d="M13 17 C 13 15, 14 13.5, 15.5 13.5 C 17.5 13.5, 19 15, 19 17" fill="#0E6D55" stroke="#0E6D55" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label-on">Customers</span>
+            </div>
+            <div class="bnav-item">
+              <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3" fill="none" stroke="#888" stroke-width="1.5"/><path d="M5 19 C 5 14.5, 7.5 12.5, 11 12.5 C 14.5 12.5, 17 14.5, 17 19" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="bnav-label">Crew</span>
+            </div>
+          </div>
+          <div class="hi-bar"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">redefine<span class="dot">.</span></div>
+  <p>Admin app · 9 screens · Thunder Bay, ON · Designed for the operator who keeps it all moving.</p>
+</footer>
+
+</body>
+</html>
