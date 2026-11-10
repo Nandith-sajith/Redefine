@@ -1,5 +1,5 @@
 name: redefine_admin
-description: "Redefine — Admin app."
+description: "Redefine Snow — Admin app: quotes, plough jobs, customers, crew and payouts."
 publish_to: 'none'
 version: 1.0.0
 
@@ -16,9 +16,27 @@ dependencies:
     path: ../../packages/redefine_core
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  http: ^1.2.0
 
 flutter:
   uses-material-design: true
+
+# App icons: `dart run flutter_launcher_icons` regenerates them from assets/icon/.
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  adaptive_icon_background: "#0A5746"
+  adaptive_icon_foreground: "assets/icon/foreground.png"
+  web:
+    generate: true
+    image_path: "assets/icon/rounded.png"
+    background_color: "#0A5746"
+    theme_color: "#0E6D55"
+  windows:
+    generate: true
+    image_path: "assets/icon/rounded.png"
+    icon_size: 256

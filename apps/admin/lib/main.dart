@@ -6,19 +6,20 @@ import 'shell.dart';
 
 void main() => runApp(const AdminApp());
 
-const _persona = AuthPersona(
+const adminPersona = AuthPersona(
   role: 'admin',
   label: 'ADMIN',
   icon: Icons.shield_outlined,
-  loginSubtitle: 'Sign in to run the day — quotes, crews, and the schedule.',
-  signupTitle: 'Create your operator account',
-  signupSubtitle: 'Set up your business and start taking on customers.',
+  loginSubtitle: 'Sign in to run the snow operation: quotes, plough jobs, crew and payouts.',
+  signupTitle: 'Create an admin account',
+  signupSubtitle: 'Admin accounts are by invitation. Enter the invite code you were given.',
   demoEmail: 'lia@redefine.co',
+  demoPassword: 'redefine',
   extra: AuthExtraField(
-    key: 'business',
-    label: 'BUSINESS NAME',
-    icon: Icons.business_outlined,
-    placeholder: 'Redefine Lawn Care',
+    key: 'inviteCode',
+    label: 'INVITE CODE',
+    icon: Icons.key_outlined,
+    placeholder: 'Your invite code',
   ),
 );
 
@@ -26,13 +27,10 @@ class AdminApp extends StatelessWidget {
   const AdminApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Redefine — Admin',
-      debugShowCheckedModeBanner: false,
-      theme: redefineTheme(),
-      builder: (context, child) => RPhoneFrame(child: child ?? const SizedBox()),
-      home: LoginScreen(persona: _persona, api: api, home: (_) => const AdminShell()),
-    );
-  }
+  Widget build(BuildContext context) => RedefineApp(
+    title: 'Redefine Snow — Admin',
+    persona: adminPersona,
+    session: session,
+    home: (_) => const AdminShell(),
+  );
 }

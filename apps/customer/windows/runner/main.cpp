@@ -27,7 +27,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-  if (!window.Create(L"redefine_customer", origin, size)) {
+  // The em dash is written as a universal character name so the title does
+  // not depend on how the compiler reads this file's encoding.
+  if (!window.Create(L"Redefine Snow \u2014 Customer", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

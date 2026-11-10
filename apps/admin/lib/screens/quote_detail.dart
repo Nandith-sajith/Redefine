@@ -1,168 +1,252 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:redefine_core/redefine_core.dart';
 import 'package:redefine_ui/redefine_ui.dart';
 
 import '../api.dart';
+import '../widgets/common.dart';
+import '../widgets/price_fields.dart';
+import 'customer_detail.dart';
 
+typedef _QuoteData = ({Quote quote, Settings settings});
+
+/// A quote request: who asked, for which property, and the form to price it.
+/// Pops with `true` once a quote has been sent.
 class QuoteDetailScreen extends StatefulWidget {
   const QuoteDetailScreen({super.key, required this.quoteId});
   final String quoteId;
+
   @override
   State<QuoteDetailScreen> createState() => _QuoteDetailScreenState();
 }
 
-class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
-  late Future<Quote> _quote;
-  int _biweekly = 52;
-  bool _sending = false;
+class _QuoteDetailScreenState extends State<QuoteDetailScreen> with BusyState<QuoteDetailScreen> {
+  late final RLiveController<_QuoteData> _data = RLiveController(_load);
+  final _price = TextEditingController();
+  final _crewPay = TextEditingController();
+  bool _prefilled = false;
 
   @override
-  void initState() {
-    super.initState();
-    _quote = api.quote(widget.quoteId);
+  void dispose() {
+    _data.dispose();
+    _price.dispose();
+    _crewPay.dispose();
+    super.dispose();
   }
 
-  Future<void> _editPrice() async {
-    final ctrl = TextEditingController(text: '$_biweekly');
-    final result = await showDialog<int>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Bi-weekly rate'),
-        content: TextField(controller: ctrl, keyboardType: TextInputType.number, decoration: const InputDecoration(prefixText: '\$ ')),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, int.tryParse(ctrl.text)), child: const Text('Save')),
-        ],
-      ),
+  Future<_QuoteData> _load() async {
+    final (quote, settings) = await both(api.quote(widget.quoteId), api.settings());
+    // Only the first load fills the form: a later refresh must not overwrite
+    // what is being typed.
+    if (mounted && !_prefilled) {
+      _prefilled = true;
+      _price.text = quote.price?.toString() ?? '';
+      _crewPay.text = quote.crewPay?.toString() ?? '';
+    }
+    return (quote: quote, settings: settings);
+  }
+
+  Future<void> _send(Quote quote) async {
+    final pricing = parsePricing(_price.text, _crewPay.text);
+    if (pricing == null) return;
+    final resend = quote.status == QuoteStatus.sent;
+    // Re-sending the same offer would change nothing.
+    if (resend && pricing.price == quote.price && pricing.crewPay == quote.crewPay) return;
+    final customer = firstNameOf(quote.customerName);
+    final sent = await run(
+      () => api.sendQuote(quote.id, price: pricing.price, crewPay: pricing.crewPay),
+      success: resend
+          ? 'Quote updated'
+          : (customer.isEmpty ? 'Quote sent' : 'Quote sent to $customer'),
+      onError: (e) {
+        // The customer answered in the meantime: show where the quote stands.
+        if (e.code == 'quote_not_open') _data.refresh();
+        return false;
+      },
     );
-    if (result != null) setState(() => _biweekly = result);
-  }
-
-  Future<void> _send() async {
-    setState(() => _sending = true);
-    try {
-      await api.sendQuote(widget.quoteId, _biweekly);
-    } catch (_) {}
-    if (!mounted) return;
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Quote sent to the customer ✓')));
+    if (sent != null && mounted) Navigator.of(context).pop(true);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: RColors.surface,
-      body: SafeArea(
-        child: FutureBuilder<Quote>(
-          future: _quote,
-          builder: (context, snap) {
-            if (!snap.hasData) return const Center(child: CircularProgressIndicator(strokeWidth: 2, color: RColors.teal));
-            final q = snap.data!;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 22),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const RAppHeader(greeting: 'Hi Lia!', initials: adminInitials),
-                const SizedBox(height: 12),
-                RBackRow('Back to inbox', onTap: () => Navigator.pop(context)),
-                const SizedBox(height: 14),
-                RPill('PENDING ${q.pendingDays} DAYS', bg: RColors.amberTint, fg: RColors.amber, dot: RColors.amber),
-                const SizedBox(height: 12),
-                Text('Quote for ${q.customerName}', style: RText.h1),
-                const SizedBox(height: 6),
-                Text('Submitted ${q.submittedAt} · ${q.propertyName}', style: RText.muted),
-                const SizedBox(height: 14),
-                RCard(child: Row(children: [
-                  RAvatar(q.customerInitials, size: 38),
-                  const SizedBox(width: 12),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(q.customerName, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: RColors.ink)),
-                    const SizedBox(height: 1),
-                    Text('${q.email} · ${q.phone}', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkMuted)),
-                  ])),
-                ])),
-                const SizedBox(height: 12),
-                RCard(child: Row(children: [
-                  Container(width: 56, height: 56, decoration: BoxDecoration(color: RColors.paper2, borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.house_rounded, size: 30, color: RColors.teal)),
-                  const SizedBox(width: 12),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(q.propertyName, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: RColors.ink)),
-                    const SizedBox(height: 2),
-                    Text(q.address, style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkMuted)),
-                    if (q.propertyDesc.isNotEmpty) ...[const SizedBox(height: 2), Text(q.propertyDesc, style: GoogleFonts.plusJakartaSans(fontSize: 10, color: RColors.inkMuted))],
-                  ])),
-                ])),
-                if (q.note.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  RSectionLabel('Note from ${q.customerName.split(' ').first}'),
-                  const SizedBox(height: 8),
-                  RCard(radius: 14, child: Text('"${q.note}"', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontStyle: FontStyle.italic, color: const Color(0xFF444444), height: 1.5))),
-                ],
-                if (q.crewVisit != null) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(color: RColors.tealTint, borderRadius: BorderRadius.circular(14)),
-                    child: Row(children: [
-                      const CircleAvatar(radius: 11, backgroundColor: RColors.lime, child: Icon(Icons.check, size: 12, color: RColors.tealDeep)),
-                      const SizedBox(width: 10),
-                      Text(q.crewVisit!, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: RColors.tealDeep)),
-                    ]),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                const RSectionLabel('Pricing · base + location adjustment'),
-                const SizedBox(height: 8),
-                _recommendedCard(),
-                const SizedBox(height: 12),
-                _oneTimeCard(q.oneTimePrice ?? 85),
-                const SizedBox(height: 22),
-                RPrimaryButton(_sending ? 'Sending…' : 'Send quote to ${q.customerName.split(' ').first}', onPressed: _sending ? null : _send),
-              ]),
-            );
-          },
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => PushedPage(
+    child: RLive<_QuoteData>(
+      controller: _data,
+      padding: pagePadding,
+      builder: (context, data) => _body(data.quote, data.settings),
+    ),
+  );
 
-  Widget _recommendedCard() => Stack(clipBehavior: Clip.none, children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: RColors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: RColors.teal, width: 2)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('Lawn care (bi-weekly)', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: RColors.ink)),
-              GestureDetector(onTap: _editPrice, child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Text('\$', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: RColors.teal)),
-                Text('$_biweekly', style: GoogleFonts.plusJakartaSans(fontSize: 26, fontWeight: FontWeight.w700, color: RColors.teal, letterSpacing: -0.5)),
-                const SizedBox(width: 4),
-                Padding(padding: const EdgeInsets.only(bottom: 3), child: Text('/visit', style: RText.muted)),
-                const SizedBox(width: 6),
-                const Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.edit_outlined, size: 13, color: RColors.teal)),
-              ])),
-            ]),
-            const SizedBox(height: 6),
-            Text('Billed bi-weekly · 16 visits · ~8 months · tap to edit', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkMuted)),
-          ]),
+  Widget _body(Quote quote, Settings settings) {
+    final open = quote.status == QuoteStatus.pending || quote.status == QuoteStatus.sent;
+    final requested = quote.createdAt;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _StatusPill(quote),
+        const SizedBox(height: 12),
+        Text(
+          quote.customerName.isEmpty ? 'Quote request' : 'Quote for ${quote.customerName}',
+          style: RText.h1,
         ),
-        Positioned(top: -9, left: 16, child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-          decoration: BoxDecoration(color: RColors.lime, borderRadius: BorderRadius.circular(999)),
-          child: Text('RECOMMENDED', style: GoogleFonts.plusJakartaSans(fontSize: 9, fontWeight: FontWeight.w700, color: RColors.ink, letterSpacing: 0.6)),
-        )),
-      ]);
-
-  Widget _oneTimeCard(int price) => RCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text('Lawn mowing only (one-time)', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: RColors.ink)),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text('\$', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: RColors.ink)),
-            Text('$price', style: GoogleFonts.plusJakartaSans(fontSize: 22, fontWeight: FontWeight.w700, color: RColors.ink, letterSpacing: -0.5)),
-          ]),
-        ]),
         const SizedBox(height: 6),
-        Text('Fixed price · single visit', style: RText.muted),
-      ]));
+        Text(
+          [if (requested != null) 'Requested ${fmtAgo(requested)}', quote.propertyName].join(' · '),
+          style: RText.muted,
+        ),
+        const SizedBox(height: 14),
+        ListCard(
+          children: [
+            ListRow(
+              child: PersonRow(
+                initials: quote.customerInitials,
+                colorKey: quote.customerColor,
+                name: quote.customerName,
+                subtitle: 'Customer',
+              ),
+            ),
+            if (quote.email.isNotEmpty)
+              ContactRow(icon: Icons.mail_outline, value: quote.email, what: 'Email'),
+            if (quote.phone.isNotEmpty)
+              ContactRow(icon: Icons.phone_outlined, value: quote.phone, what: 'Phone'),
+          ],
+        ),
+        const SizedBox(height: 12),
+        RCard(
+          child: Row(
+            children: [
+              PropertyIcon(quote.illustration, size: 56),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(quote.propertyName, style: RText.title.copyWith(fontSize: 13)),
+                    const SizedBox(height: 2),
+                    Text(quote.address, style: RText.muted.copyWith(fontSize: 11)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (quote.note.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          const RSectionLabel('Note from the customer'),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: RCard(
+              radius: 14,
+              child: Text(
+                quote.note,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  color: const Color(0xFF444444),
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 18),
+        RSectionLabel(open ? 'Your price' : 'Quoted price'),
+        const SizedBox(height: 8),
+        if (open) ..._form(quote, settings) else ..._outcome(quote),
+      ],
+    );
+  }
+
+  List<Widget> _form(Quote quote, Settings settings) {
+    final pricing = parsePricing(_price.text, _crewPay.text);
+    final resend = quote.status == QuoteStatus.sent;
+    final unchanged =
+        pricing != null && pricing.price == quote.price && pricing.crewPay == quote.crewPay;
+    return [
+      RCard(
+        child: PriceFields(
+          price: _price,
+          crewPay: _crewPay,
+          enabled: !busy,
+          onChanged: () => setState(() {}),
+          onSubmitted: () => _send(quote),
+        ),
+      ),
+      const SizedBox(height: 12),
+      RBanner(
+        'Shovelling walkways and steps adds ${money(settings.shovelPrice)} for the customer '
+        'and ${money(settings.crewShovelBonus)} for the crew. Change these in Settings.',
+      ),
+      if (resend) ...[
+        const SizedBox(height: 12),
+        Text(
+          'This quote is with the customer. You can change the offer until they answer.',
+          style: RText.muted.copyWith(height: 1.45),
+        ),
+      ],
+      const SizedBox(height: 20),
+      RPrimaryButton(
+        resend ? 'Update quote' : 'Send quote',
+        busy: busy,
+        onPressed: pricing == null || (resend && unchanged) ? null : () => _send(quote),
+      ),
+    ];
+  }
+
+  List<Widget> _outcome(Quote quote) {
+    final price = quote.price, crewPay = quote.crewPay, decided = quote.decidedAt;
+    final (decision, next) = switch (quote.status) {
+      QuoteStatus.accepted => (
+        'Accepted',
+        'The property is active. Change its price from the customer page; a new price '
+            'applies to future requests.',
+      ),
+      QuoteStatus.declined => ('Declined', 'The customer can ask for a new quote from their app.'),
+      _ => ('Decided', ''),
+    };
+    return [
+      RCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (price != null) KeyValueRow('Customer pays per plough', money(price), strong: true),
+            if (crewPay != null) KeyValueRow('Crew earns per plough', money(crewPay)),
+            if (price != null && crewPay != null)
+              KeyValueRow('Margin', money(price - crewPay), valueColor: RColors.tealDeep),
+            if (decided != null) KeyValueRow(decision, fmtDayTime(decided)),
+          ],
+        ),
+      ),
+      if (next.isNotEmpty) ...[
+        const SizedBox(height: 12),
+        Text(next, style: RText.muted.copyWith(height: 1.45)),
+      ],
+      const SizedBox(height: 12),
+      ROutlineButton(
+        'View customer',
+        fullWidth: true,
+        icon: Icons.person_outline,
+        onPressed: () =>
+            pushScreen<void>(context, CustomerDetailScreen(customerId: quote.customerId)),
+      ),
+    ];
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill(this.quote);
+  final Quote quote;
+
+  @override
+  Widget build(BuildContext context) => switch (quote.status) {
+    QuoteStatus.pending => const RPill(
+      'NEEDS A PRICE',
+      bg: RColors.amberTint,
+      fg: Color(0xFF7A5514),
+      dot: RColors.amber,
+    ),
+    QuoteStatus.sent => const RPill('SENT · WAITING FOR THE CUSTOMER', dot: RColors.teal),
+    QuoteStatus.accepted => const RPill('ACCEPTED', icon: Icons.check_rounded),
+    QuoteStatus.declined => const RPill('DECLINED', bg: RColors.dangerTint, fg: RColors.danger),
+    QuoteStatus.unknown => const RPill('UNKNOWN', bg: RColors.paper2, fg: RColors.inkMuted),
+  };
 }

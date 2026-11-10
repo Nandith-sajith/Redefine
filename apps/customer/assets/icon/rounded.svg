@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="petal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FD8B7"/><stop offset="1" stop-color="#0E6D55"/></linearGradient>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2F98B"/><stop offset="1" stop-color="#B3D82A"/></linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.45"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#FFFFFF"/>
+      <line x1="760" y1="222" x2="318" y2="500" stroke="#000000" stroke-width="54" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <rect width="1024" height="1024" rx="230" fill="#0C1C19"/>
+  <g mask="url(#gap)">
+    <path d="M233 486 A280 280 0 0 1 791 486 Z" fill="url(#petal)"/>
+    <path d="M233 486 A280 280 0 0 1 791 486 Z" fill="url(#gloss)" opacity="0.5"/>
+  </g>
+  <path d="M233 538 A280 280 0 0 0 791 538 Z" fill="url(#base)"/>
+  <path d="M233 538 H791 L760 600 A280 280 0 0 1 264 600 Z" fill="url(#gloss)" opacity="0.35"/>
+</svg>

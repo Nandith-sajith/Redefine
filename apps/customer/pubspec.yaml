@@ -1,5 +1,5 @@
 name: redefine_customer
-description: "Redefine — Customer app."
+description: "Redefine Snow — customer app: get a quote, then request a snow plough on demand."
 publish_to: 'none'
 version: 1.0.0
 
@@ -10,15 +10,34 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  url_launcher: ^6.3.1
   redefine_ui:
     path: ../../packages/redefine_ui
   redefine_core:
     path: ../../packages/redefine_core
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  http: ^1.2.0
 
 flutter:
   uses-material-design: true
+
+# App icons: `dart run flutter_launcher_icons` regenerates them from assets/icon/.
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  adaptive_icon_background: "#0C1C19"
+  adaptive_icon_foreground: "assets/icon/foreground.png"
+  web:
+    generate: true
+    image_path: "assets/icon/rounded.png"
+    background_color: "#0C1C19"
+    theme_color: "#0E6D55"
+  windows:
+    generate: true
+    image_path: "assets/icon/rounded.png"
+    icon_size: 256

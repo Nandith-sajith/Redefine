@@ -20,6 +20,8 @@ class RColors {
   static const amber = Color(0xFFC58D2C);
   static const amberTint = Color(0xFFFFF3E0);
   static const slate = Color(0xFF5C7A99);
+  static const danger = Color(0xFF8A2E2E);
+  static const dangerTint = Color(0xFFFBEAEA);
 }
 
 /// Avatar / chip colour pairs keyed by the design's colour names.
@@ -34,42 +36,44 @@ class RColors {
   }
 }
 
-/// Maps a program phase to a Material icon.
-IconData phaseIcon(String phase) {
-  switch (phase) {
-    case 'raking':
-      return Icons.cleaning_services_outlined;
-    case 'leafBlow':
-      return Icons.air;
-    case 'seeding':
-      return Icons.eco_outlined;
-    case 'fertilizing':
-      return Icons.water_drop_outlined;
-    case 'overseeding':
-      return Icons.grass;
-    case 'aeration':
-    default:
-      return Icons.blur_on;
-  }
-}
+/// Icon for a plough request, with or without shovelling.
+IconData serviceIcon({required bool shovel}) => Icons.ac_unit_rounded;
 
-String phaseLabel(String phase) {
-  switch (phase) {
-    case 'raking':
-      return 'Raking';
-    case 'leafBlow':
-      return 'Leaf blow & bag';
-    case 'seeding':
-      return 'Seeding';
-    case 'fertilizing':
-      return 'Fertilizing';
-    case 'overseeding':
-      return 'Over-seeding';
-    case 'aeration':
-    default:
-      return 'Aeration';
-  }
-}
+String serviceLabel({required bool shovel}) => shovel ? 'Plough + shovel' : 'Plough';
+
+/// The property illustration keys the API accepts, in picker order.
+const List<String> kIllustrations = [
+  'house',
+  'bungalow',
+  'townhouse',
+  'cabin',
+  'duplex',
+  'farmhouse',
+  'cottage',
+  'apartment',
+  'garage',
+];
+
+/// Icon for a property illustration key; unknown keys fall back to `house`.
+IconData illustrationIcon(String key) => switch (key) {
+  'bungalow' => Icons.bungalow_rounded,
+  'townhouse' => Icons.holiday_village_rounded,
+  'cabin' => Icons.cabin_rounded,
+  'duplex' => Icons.maps_home_work_rounded,
+  'farmhouse' => Icons.gite_rounded,
+  'cottage' => Icons.cottage_rounded,
+  'apartment' => Icons.apartment_rounded,
+  'garage' => Icons.garage_rounded,
+  _ => Icons.house_rounded,
+};
+
+Color illustrationColor(String key) => switch (key) {
+  'bungalow' || 'duplex' => RColors.tealDeep,
+  'townhouse' || 'cabin' || 'apartment' => RColors.slate,
+  'farmhouse' || 'cottage' => RColors.amber,
+  'garage' => RColors.inkMuted,
+  _ => RColors.teal,
+};
 
 /// App-wide theme. Plus Jakarta Sans, paper background, teal seed.
 ThemeData redefineTheme() {
@@ -80,29 +84,83 @@ ThemeData redefineTheme() {
       seedColor: RColors.teal,
       primary: RColors.teal,
       surface: RColors.surface,
+      error: RColors.danger,
     ),
   );
+  final menuText = GoogleFonts.plusJakartaSans(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    color: RColors.ink,
+  );
   return base.copyWith(
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
-        .apply(bodyColor: RColors.ink, displayColor: RColors.ink),
+    textTheme: GoogleFonts.plusJakartaSansTextTheme(
+      base.textTheme,
+    ).apply(bodyColor: RColors.ink, displayColor: RColors.ink),
     splashFactory: InkRipple.splashFactory,
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: RColors.teal,
+      linearTrackColor: RColors.tealTint,
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: RColors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: RColors.white,
+      surfaceTintColor: Colors.transparent,
+      textStyle: menuText,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: RColors.border, width: 0.6),
+      ),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: RColors.ink,
+      contentTextStyle: menuText.copyWith(color: RColors.white),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
   );
 }
 
 /// Convenience text styles.
 class RText {
-  static TextStyle h1 = GoogleFonts.plusJakartaSans(
-      fontSize: 24, fontWeight: FontWeight.w700, color: RColors.ink, letterSpacing: -0.5);
-  static TextStyle h2 = GoogleFonts.plusJakartaSans(
-      fontSize: 19, fontWeight: FontWeight.w700, color: RColors.ink);
-  static TextStyle title = GoogleFonts.plusJakartaSans(
-      fontSize: 14, fontWeight: FontWeight.w700, color: RColors.ink);
-  static TextStyle body = GoogleFonts.plusJakartaSans(
-      fontSize: 13, fontWeight: FontWeight.w500, color: RColors.ink);
-  static TextStyle muted = GoogleFonts.plusJakartaSans(
-      fontSize: 12, fontWeight: FontWeight.w500, color: RColors.inkMuted);
-  static TextStyle eyebrow = GoogleFonts.plusJakartaSans(
-      fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF888888), letterSpacing: 0.6);
-  static TextStyle price = GoogleFonts.plusJakartaSans(
-      fontSize: 16, fontWeight: FontWeight.w700, color: RColors.teal);
+  static final TextStyle h1 = GoogleFonts.plusJakartaSans(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    color: RColors.ink,
+    letterSpacing: -0.5,
+  );
+  static final TextStyle h2 = GoogleFonts.plusJakartaSans(
+    fontSize: 19,
+    fontWeight: FontWeight.w700,
+    color: RColors.ink,
+  );
+  static final TextStyle title = GoogleFonts.plusJakartaSans(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: RColors.ink,
+  );
+  static final TextStyle body = GoogleFonts.plusJakartaSans(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    color: RColors.ink,
+  );
+  static final TextStyle muted = GoogleFonts.plusJakartaSans(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    color: RColors.inkMuted,
+  );
+  static final TextStyle eyebrow = GoogleFonts.plusJakartaSans(
+    fontSize: 11,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF888888),
+    letterSpacing: 0.6,
+  );
+  static final TextStyle price = GoogleFonts.plusJakartaSans(
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+    color: RColors.teal,
+  );
 }

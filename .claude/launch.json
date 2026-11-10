@@ -1,0 +1,79 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "dart",
+      "runtimeArgs": [
+        "run",
+        "backend/bin/server.dart"
+      ],
+      "port": 8080
+    },
+    {
+      "name": "customer",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5101",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "apps/customer/build/web"
+      ],
+      "port": 5101
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5102",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "apps/admin/build/web"
+      ],
+      "port": 5102
+    },
+    {
+      "name": "crew",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5103",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "apps/crew/build/web"
+      ],
+      "port": 5103
+    },
+    {
+      "name": "website",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "process.chdir('C:/Front&Web/website'); process.env.PORT='5000'; process.env.BROWSER='none'; require('C:/Front&Web/website/node_modules/react-scripts/scripts/start.js')"
+      ],
+      "port": 5000
+    },
+    {
+      "name": "website_2",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5001",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "C:\\Front&Web\\website_2"
+      ],
+      "port": 5001
+    }
+  ]
+}

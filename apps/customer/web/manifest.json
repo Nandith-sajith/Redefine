@@ -1,11 +1,11 @@
 {
-    "name": "redefine_customer",
-    "short_name": "redefine_customer",
+    "name": "Redefine Snow — Customer",
+    "short_name": "Redefine Snow",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0C1C19",
+    "theme_color": "#0E6D55",
+    "description": "Get a price for your driveway, then request a snow plough whenever it snows.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

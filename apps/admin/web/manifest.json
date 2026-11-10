@@ -1,11 +1,11 @@
 {
-    "name": "redefine_admin",
-    "short_name": "redefine_admin",
+    "name": "Redefine Snow — Admin",
+    "short_name": "Redefine Admin",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0A5746",
+    "theme_color": "#0E6D55",
+    "description": "Redefine Snow admin: price quotes, dispatch plough jobs, manage customers, crew and payouts.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

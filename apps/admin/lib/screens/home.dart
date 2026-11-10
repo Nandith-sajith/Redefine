@@ -1,198 +1,226 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:redefine_ui/redefine_ui.dart';
 
-import '../api.dart';
-import 'post_card.dart';
+import '../nav.dart';
+import '../widgets/common.dart';
+import '../widgets/job_widgets.dart';
+import 'job_detail.dart';
+import 'new_job.dart';
 import 'quote_detail.dart';
 
-const _attnIcons = {'quote': Icons.chat_bubble_outline, 'crew': Icons.person_outline, 'card': Icons.assignment_outlined};
-const _crewInitials = {'crew-marcus': 'MR', 'crew-jordan': 'JP', 'crew-sam': 'SC', 'crew-pete': 'PL', 'crew-tasha': 'TR'};
-const _crewColors = {'crew-marcus': 'lime', 'crew-jordan': 'teal', 'crew-sam': 'paper', 'crew-pete': 'paper', 'crew-tasha': 'teal'};
+/// The Home tab: today's numbers, what is waiting on the office and every
+/// job that is live right now.
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key, required this.dash, required this.goTo});
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  /// Owned by the shell, which also draws its badges from it.
+  final RLiveController<AdminDashboard> dash;
+  final GoTo goTo;
+
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) => RLive<AdminDashboard>(
+    controller: dash,
+    // Not tied to this tab being in front: the badges on the bottom bar must
+    // stay current on every tab.
+    pollEvery: const Duration(seconds: 10),
+    padding: tabPadding,
+    builder: (context, dashboard) => _HomeBody(dashboard: dashboard, goTo: goTo),
+  );
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late Future<Map<String, dynamic>> _data;
-
-  @override
-  void initState() {
-    super.initState();
-    _data = api.adminDashboard();
-  }
-
-  void _reload() => setState(() => _data = api.adminDashboard());
-
-  Future<void> _openQuote() async {
-    final quotes = await api.quotes(status: 'pending');
-    if (!mounted || quotes.isEmpty) return;
-    await Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => QuoteDetailScreen(quoteId: quotes.first.id)));
-    _reload();
-  }
+class _HomeBody extends StatelessWidget {
+  const _HomeBody({required this.dashboard, required this.goTo});
+  final AdminDashboard dashboard;
+  final GoTo goTo;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: FutureBuilder<Map<String, dynamic>>(
-        future: _data,
-        builder: (context, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator(strokeWidth: 2, color: RColors.teal));
-          final d = snap.data!;
-          final attn = (d['needsAttention'] as List).cast<Map<String, dynamic>>();
-          final tw = d['thisWeek'] as Map<String, dynamic>;
-          final toPost = (tw['toPost'] as List).cast<Map<String, dynamic>>();
-          final today = (d['todaysJobs'] as List).cast<Map<String, dynamic>>();
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const RAppHeader(greeting: 'Hi Lia!', initials: adminInitials),
-              const SizedBox(height: 16),
-              Text(d['date'] ?? '', style: RText.h1),
-              const SizedBox(height: 4),
-              Text(d['summary'] ?? '', style: RText.muted),
-              const SizedBox(height: 18),
-              const RSectionLabel('Needs attention'),
-              const SizedBox(height: 8),
-              for (var i = 0; i < attn.length; i++) Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _attnCard(attn[i], i == 0),
-              ),
-              const SizedBox(height: 10),
-              RSectionLabel('This week', trailing: Text('View posting board →', style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w600, color: RColors.tealDeep))),
-              const SizedBox(height: 8),
-              _thisWeekCard(tw),
-              const SizedBox(height: 8),
-              _toPostList(toPost),
-              const SizedBox(height: 18),
-              const RSectionLabel("Today's jobs"),
-              const SizedBox(height: 8),
-              _todayCard(today),
-            ]),
-          );
-        },
-      ),
-    );
-  }
+    final counts = dashboard.counts;
+    final quotes = dashboard.pendingQuotes;
+    final applicants = dashboard.pendingCrew;
+    final live = dashboard.liveJobs;
+    final owed = dashboard.paymentIssues.fold<int>(0, (sum, job) => sum + job.total);
+    final needsAttention = quotes.isNotEmpty || applicants.isNotEmpty || counts.paymentIssues > 0;
 
-  Widget _attnCard(Map<String, dynamic> a, bool first) {
-    return RCard(
-      onTap: first ? _openQuote : null,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(children: [
-        Container(width: 32, height: 32, decoration: BoxDecoration(color: RColors.paper2, borderRadius: BorderRadius.circular(8)), child: Icon(_attnIcons[a['icon']] ?? Icons.circle, size: 16, color: RColors.teal)),
-        const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(a['title'], style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: RColors.ink)),
-          const SizedBox(height: 1),
-          Text(a['sub'], style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkMuted)),
-        ])),
-        const Icon(Icons.chevron_right, size: 16, color: Color(0xFF888888)),
-      ]),
-    );
-  }
+    void openJobs(JobsView view) => goTo(AdminTab.jobs, view: view);
 
-  Widget _thisWeekCard(Map<String, dynamic> tw) {
-    final filled = (tw['filled'] as num).toInt(), total = (tw['total'] as num).toInt();
-    return RCard(
-      radius: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(tw['label'], style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: RColors.ink)),
-          const SizedBox(height: 2),
-          Row(children: [
-            Text('$filled of $total jobs filled', style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: RColors.tealDeep)),
-            Text(' · ${total - filled} unfilled', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkMuted)),
-          ]),
-        ]),
-        RProgressBar(filled / total),
-      ]),
-    );
-  }
-
-  Widget _toPostList(List<Map<String, dynamic>> toPost) {
-    if (toPost.isEmpty) return const SizedBox.shrink();
-    return RCard(
-      radius: 14,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-      child: Column(children: [
-        for (var i = 0; i < toPost.length; i++) _postRow(toPost[i]['name'], i > 0),
-      ]),
-    );
-  }
-
-  Widget _postRow(String name, bool border) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 11),
-        decoration: BoxDecoration(border: border ? const Border(top: BorderSide(color: RColors.borderSoft, width: 0.6)) : null),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(name, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: RColors.ink)),
-            const SizedBox(height: 4),
-            const RChip('TO POST', icon: Icons.circle, iconColor: Color(0xFF999999)),
-          ]),
-          _postButton(name),
-        ]),
-      );
-
-  Widget _postButton(String name) => OutlinedButton(
-        onPressed: () async {
-          await Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (_) => PostCardScreen(propertyName: name)));
-          _reload();
-        },
-        style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF777777),
-          side: const BorderSide(color: Color(0xFF999999)),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-          textStyle: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.w700),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(fmtLongDate(dashboard.serverTime ?? DateTime.now()), style: RText.h1),
+        const SizedBox(height: 4),
+        Text(
+          '${countOf(counts.doneToday, 'plough')} done today · ${money(counts.revenueToday)} billed',
+          style: RText.muted,
         ),
-        child: const Text('+ Post'),
-      );
-
-  Widget _todayCard(List<Map<String, dynamic>> jobs) {
-    return RCard(
-      radius: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      child: Column(children: [
-        for (var i = 0; i < jobs.length; i++) _todayRow(jobs[i], i > 0),
-      ]),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: StatTile(
+                label: 'Waiting for crew',
+                value: '${counts.openJobs}',
+                valueColor: counts.openJobs > 0 ? amberInk : RColors.ink,
+                onTap: () => openJobs(JobsView.active),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: StatTile(
+                label: 'Crew assigned',
+                value: '${counts.claimedJobs}',
+                onTap: () => openJobs(JobsView.active),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: StatTile(
+                label: 'In progress',
+                value: '${counts.inProgressJobs}',
+                onTap: () => openJobs(JobsView.active),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: StatTile(
+                label: 'Done today',
+                value: '${counts.doneToday}',
+                valueColor: RColors.tealDeep,
+                onTap: () => openJobs(JobsView.today),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ROutlineButton(
+          'New job',
+          icon: Icons.add_rounded,
+          color: RColors.tealDeep,
+          fullWidth: true,
+          onPressed: () => startNewJob(context),
+        ),
+        if (needsAttention) ...[
+          const SizedBox(height: 22),
+          const RSectionLabel('Needs attention'),
+          const SizedBox(height: 8),
+          for (final quote in quotes)
+            _AttentionCard(
+              icon: Icons.request_quote_outlined,
+              title: 'Quote request · ${quote.customerName}',
+              subtitle: [
+                quote.propertyName,
+                quote.address,
+                if (quote.createdAt != null) 'requested ${fmtAgo(quote.createdAt!)}',
+              ].join(' · '),
+              onTap: () => pushScreen<bool>(context, QuoteDetailScreen(quoteId: quote.id)),
+            ),
+          for (final member in applicants)
+            _AttentionCard(
+              icon: Icons.person_add_alt_1_outlined,
+              title: '${member.name} applied to join the crew',
+              subtitle: member.appliedAt == null
+                  ? 'Waiting for your approval'
+                  : 'Applied ${fmtAgo(member.appliedAt!)} · waiting for your approval',
+              onTap: () => goTo(AdminTab.crew),
+            ),
+          if (counts.paymentIssues > 0)
+            _AttentionCard(
+              icon: Icons.credit_card_off_outlined,
+              title: 'Payment issues · ${counts.paymentIssues}',
+              subtitle: owed > 0
+                  ? '${money(owed)} still to collect'
+                  : 'Charges that failed or are still due',
+              onTap: () =>
+                  goTo(AdminTab.jobs, view: JobsView.history, filter: HistoryFilter.needsPayment),
+            ),
+        ],
+        const SizedBox(height: 14),
+        RSectionLabel('Live now${live.isEmpty ? '' : ' · ${live.length}'}'),
+        const SizedBox(height: 8),
+        if (live.isEmpty)
+          const RCard(
+            padding: EdgeInsets.zero,
+            child: REmptyState(
+              icon: Icons.ac_unit_rounded,
+              title: 'All clear',
+              message: 'No plough is waiting or under way. New requests appear here on their own.',
+            ),
+          )
+        else
+          ListCard(
+            children: [
+              for (final job in live)
+                JobRow(
+                  job,
+                  onTap: () =>
+                      pushScreen<void>(context, AdminJobDetailScreen(jobId: job.id, initial: job)),
+                ),
+            ],
+          ),
+      ],
     );
   }
+}
 
-  Widget _todayRow(Map<String, dynamic> j, bool border) {
-    final status = j['status'];
-    final crewIds = (j['crewIds'] as List).cast<String>();
-    Widget statusWidget;
-    if (status == 'inProgress') {
-      statusWidget = const RPill('NOW', dot: RColors.lime);
-    } else if ((j['eta'] as String?)?.isNotEmpty == true) {
-      statusWidget = Text(j['eta'], style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w600, color: RColors.inkMuted));
-    } else {
-      statusWidget = const SizedBox(width: 1);
-    }
-    Widget trailing;
-    if (crewIds.isEmpty) {
-      trailing = _postButton(j['name']);
-    } else {
-      trailing = Row(mainAxisSize: MainAxisSize.min, children: [
-        for (final id in crewIds) Padding(padding: const EdgeInsets.only(left: 2), child: RAvatar(_crewInitials[id] ?? '?', colorKey: _crewColors[id] ?? 'paper', size: 22)),
-      ]);
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(border: border ? const Border(top: BorderSide(color: RColors.borderSoft, width: 0.6)) : null),
-      child: Row(children: [
-        SizedBox(width: 60, child: statusWidget),
-        Expanded(child: Text(j['name'], style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: RColors.ink))),
-        trailing,
-      ]),
-    );
-  }
+/// One thing waiting on the office: icon, what it is, a line of detail.
+class _AttentionCard extends StatelessWidget {
+  const _AttentionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: RCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: RColors.paper2,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 16, color: RColors.teal),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: RText.title.copyWith(fontSize: 13),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: RText.muted.copyWith(fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          rowChevron,
+        ],
+      ),
+    ),
+  );
 }

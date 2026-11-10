@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:redefine_core/redefine_core.dart';
 
+import 'async.dart';
+import 'report.dart';
+import 'session.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -17,6 +21,8 @@ class AuthPersona {
     this.pillBg = RColors.tealTint,
     this.pillFg = RColors.tealDeep,
     this.demoEmail = '',
+    this.demoPassword = '',
+    this.allowSignup = true,
     this.extra,
   });
 
@@ -26,24 +32,49 @@ class AuthPersona {
   final Color pillBg, pillFg;
   final String loginSubtitle;
   final String signupTitle, signupSubtitle;
-  final String demoEmail;
-  final AuthExtraField? extra; // extra signup field (business / phone)
+
+  /// Prefilled on the login screen in debug builds only.
+  final String demoEmail, demoPassword;
+
+  /// Whether the login screen links to sign-up.
+  final bool allowSignup;
+  final AuthExtraField? extra; // extra signup field (phone / invite code)
 }
 
 class AuthExtraField {
-  const AuthExtraField({required this.key, required this.label, required this.icon, required this.placeholder});
-  final String key; // 'business' | 'phone'
+  const AuthExtraField({
+    required this.key,
+    required this.label,
+    required this.icon,
+    required this.placeholder,
+  });
+  final String key; // 'phone' | 'inviteCode'
   final String label;
   final IconData icon;
   final String placeholder;
 }
 
+final _emailShape = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+String? _checkEmail(String email) {
+  if (email.isEmpty) return 'Enter your email.';
+  return _emailShape.hasMatch(email) ? null : "That doesn't look like an email address.";
+}
+
+/// What to show when signing in or up fails. Anything but an [ApiException]
+/// is a bug: it is logged, and still shown, so that the button never just
+/// seems to do nothing.
+String _failureMessage(Object error, StackTrace stack, String doing) {
+  if (error is! ApiException) reportBug(error, stack, doing);
+  return friendlyError(error);
+}
+
 // ---------------------------------------------------------------------------
+/// Signs in through the enclosing [SessionScope]; the app's gate swaps this
+/// screen out once the session is signed in.
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.persona, required this.api, required this.home});
+  const LoginScreen({super.key, required this.persona});
   final AuthPersona persona;
-  final ApiClient api;
-  final WidgetBuilder home;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -52,76 +83,143 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  String? _emailError, _passwordError, _error;
   bool _busy = false;
 
   @override
   void initState() {
     super.initState();
-    _email.text = widget.persona.demoEmail;
-    _password.text = 'redefine';
+    if (kDebugMode) {
+      _email.text = widget.persona.demoEmail;
+      _password.text = widget.persona.demoPassword;
+    }
   }
 
   @override
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    if (_busy) return;
+    final email = _email.text.trim();
+    final password = _password.text;
+    final emailError = _checkEmail(email);
+    final passwordError = password.isEmpty ? 'Enter your password.' : null;
+    setState(() {
+      _emailError = emailError;
+      _passwordError = passwordError;
+      _error = null;
+    });
+    final invalid = emailError != null
+        ? _emailFocus
+        : passwordError != null
+        ? _passwordFocus
+        : null;
+    if (invalid != null) {
+      invalid.requestFocus();
+      return;
+    }
+
     setState(() => _busy = true);
     try {
-      final res = await widget.api.login(_email.text.trim(), _password.text);
+      // On success the session changes and the gate replaces this screen.
+      await SessionScope.of(context, listen: false).login(email, password);
+    } catch (e, stack) {
+      final message = _failureMessage(e, stack, 'while signing in');
       if (!mounted) return;
-      _goHome(context, widget.home);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Welcome back, ${res.user.name.split(' ').first} 👋')));
-    } on AuthException catch (e) {
-      _error(context, e.message);
-    } catch (_) {
-      _error(context, "Couldn't reach the server. Please try again.");
+      setState(() => _error = message);
+      _refocus(_passwordFocus);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
+  // Deferred: the field cannot take focus until it is rebuilt enabled.
+  void _refocus(FocusNode node) => WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (mounted) node.requestFocus();
+  });
+
+  void _openSignup() => Navigator.of(
+    context,
+  ).push(MaterialPageRoute<void>(builder: (_) => SignupScreen(persona: widget.persona)));
+
   @override
   Widget build(BuildContext context) {
     final p = widget.persona;
-    return AuthScaffold(children: [
-      const _Wordmark(),
-      const SizedBox(height: 24),
-      _Hero(persona: p, title: 'Welcome back', subtitle: p.loginSubtitle),
-      const SizedBox(height: 24),
-      AuthField(label: 'EMAIL', icon: Icons.mail_outline, placeholder: 'you@example.com', controller: _email, keyboardType: TextInputType.emailAddress),
-      const SizedBox(height: 14),
-      AuthField(label: 'PASSWORD', icon: Icons.lock_outline, placeholder: 'Enter your password', controller: _password, password: true),
-      const SizedBox(height: 10),
-      Align(alignment: Alignment.centerRight, child: GestureDetector(
-        onTap: () => _info(context, 'Password reset isn\'t wired up in this demo.'),
-        child: Text('Forgot password?', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: RColors.tealDeep)),
-      )),
-      const SizedBox(height: 20),
-      RPrimaryButton(_busy ? 'Signing in…' : 'Log in', onPressed: _busy ? null : _submit),
-      const SizedBox(height: 14),
-      const _OrDivider(),
-      const SizedBox(height: 14),
-      _GoogleButton(onTap: () => _info(context, 'Google sign-in isn\'t set up in this demo.')),
-      const SizedBox(height: 22),
-      _FooterLink(
-        prompt: "Don't have an account?",
-        action: 'Sign up',
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => SignupScreen(persona: p, api: widget.api, home: widget.home))),
-      ),
-    ]);
+    final notice = SessionScope.of(context).notice;
+    return AuthScaffold(
+      children: [
+        const RWordmark(),
+        const SizedBox(height: 24),
+        _Hero(persona: p, title: 'Welcome back', subtitle: p.loginSubtitle),
+        const SizedBox(height: 24),
+        if (_error != null) ...[
+          RBanner(_error!, error: true),
+          const SizedBox(height: 16),
+        ] else if (notice != null) ...[
+          RBanner(notice),
+          const SizedBox(height: 16),
+        ],
+        AutofillGroup(
+          child: Column(
+            children: [
+              RTextField(
+                label: 'Email',
+                icon: Icons.mail_outline,
+                hint: 'you@example.com',
+                controller: _email,
+                focusNode: _emailFocus,
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.username, AutofillHints.email],
+                enabled: !_busy,
+                errorText: _emailError,
+                onSubmitted: (_) => _submit(),
+              ),
+              const SizedBox(height: 14),
+              RTextField(
+                label: 'Password',
+                icon: Icons.lock_outline,
+                hint: 'Enter your password',
+                controller: _password,
+                focusNode: _passwordFocus,
+                obscure: true,
+                autofillHints: const [AutofillHints.password],
+                enabled: !_busy,
+                errorText: _passwordError,
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+        RPrimaryButton('Log in', busy: _busy, onPressed: _submit),
+        if (p.allowSignup) ...[
+          const SizedBox(height: 18),
+          _FooterLink(
+            prompt: "Don't have an account?",
+            action: 'Sign up',
+            onTap: _busy ? null : _openSignup,
+          ),
+        ],
+      ],
+    );
   }
 }
 
 // ---------------------------------------------------------------------------
+/// Creates an account for the persona's role through the enclosing
+/// [SessionScope]. Pushed on top of [LoginScreen]; a successful sign-up
+/// re-keys the app, which drops this route.
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key, required this.persona, required this.api, required this.home});
+  const SignupScreen({super.key, required this.persona});
   final AuthPersona persona;
-  final ApiClient api;
-  final WidgetBuilder home;
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -132,36 +230,75 @@ class _SignupScreenState extends State<SignupScreen> {
   final _extra = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _nameFocus = FocusNode();
+  final _extraFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  String? _nameError, _extraError, _emailError, _passwordError, _error;
   bool _busy = false;
+
+  bool get _needsInvite => widget.persona.extra?.key == 'inviteCode';
 
   @override
   void dispose() {
-    _name.dispose();
-    _extra.dispose();
-    _email.dispose();
-    _password.dispose();
+    for (final c in [_name, _extra, _email, _password]) {
+      c.dispose();
+    }
+    for (final f in [_nameFocus, _extraFocus, _emailFocus, _passwordFocus]) {
+      f.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _submit() async {
+    if (_busy) return;
+    final name = _name.text.trim();
+    final extra = _extra.text.trim();
+    final email = _email.text.trim();
+    final password = _password.text;
+    final nameError = name.isEmpty
+        ? 'Enter your name.'
+        : name.length > 80
+        ? 'Use 80 characters or fewer.'
+        : null;
+    final extraError = _needsInvite && extra.isEmpty ? 'Enter your invite code.' : null;
+    final emailError = _checkEmail(email);
+    final passwordError = password.length < 8 ? 'Use at least 8 characters.' : null;
+    setState(() {
+      _nameError = nameError;
+      _extraError = extraError;
+      _emailError = emailError;
+      _passwordError = passwordError;
+      _error = null;
+    });
+    final invalid = nameError != null
+        ? _nameFocus
+        : extraError != null
+        ? _extraFocus
+        : emailError != null
+        ? _emailFocus
+        : passwordError != null
+        ? _passwordFocus
+        : null;
+    if (invalid != null) {
+      invalid.requestFocus();
+      return;
+    }
+
+    final extraKey = widget.persona.extra?.key;
     setState(() => _busy = true);
-    final p = widget.persona;
     try {
-      final res = await widget.api.signup(
-        name: _name.text.trim(),
-        email: _email.text.trim(),
-        password: _password.text,
-        role: p.role,
-        phone: p.extra?.key == 'phone' ? _extra.text.trim() : null,
-        business: p.extra?.key == 'business' ? _extra.text.trim() : null,
+      // On success the session changes and the app drops this route.
+      await SessionScope.of(context, listen: false).signup(
+        name: name,
+        email: email,
+        password: password,
+        phone: extraKey == 'phone' ? extra : null,
+        inviteCode: extraKey == 'inviteCode' ? extra : null,
       );
-      if (!mounted) return;
-      _goHome(context, widget.home);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Account created — welcome, ${res.user.name.split(' ').first} 🌱')));
-    } on AuthException catch (e) {
-      _error(context, e.message);
-    } catch (_) {
-      _error(context, "Couldn't reach the server. Please try again.");
+    } catch (e, stack) {
+      final message = _failureMessage(e, stack, 'while signing up');
+      if (mounted) setState(() => _error = message);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -170,41 +307,90 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final p = widget.persona;
-    return AuthScaffold(children: [
-      const _Wordmark(),
-      const SizedBox(height: 24),
-      _Hero(persona: p, title: p.signupTitle, subtitle: p.signupSubtitle),
-      const SizedBox(height: 24),
-      AuthField(label: 'FULL NAME', icon: Icons.person_outline, placeholder: 'Your name', controller: _name),
-      if (p.extra != null) ...[
-        const SizedBox(height: 14),
-        AuthField(label: p.extra!.label, icon: p.extra!.icon, placeholder: p.extra!.placeholder, controller: _extra),
+    final extra = p.extra;
+    return AuthScaffold(
+      children: [
+        const RWordmark(),
+        const SizedBox(height: 24),
+        _Hero(persona: p, title: p.signupTitle, subtitle: p.signupSubtitle),
+        const SizedBox(height: 24),
+        if (_error != null) ...[RBanner(_error!, error: true), const SizedBox(height: 16)],
+        AutofillGroup(
+          child: Column(
+            children: [
+              RTextField(
+                label: 'Full name',
+                icon: Icons.person_outline,
+                hint: 'Your name',
+                controller: _name,
+                focusNode: _nameFocus,
+                keyboardType: TextInputType.name,
+                autofillHints: const [AutofillHints.name],
+                enabled: !_busy,
+                errorText: _nameError,
+                onSubmitted: (_) => _submit(),
+              ),
+              if (extra != null) ...[
+                const SizedBox(height: 14),
+                RTextField(
+                  label: extra.label,
+                  icon: extra.icon,
+                  hint: extra.placeholder,
+                  controller: _extra,
+                  focusNode: _extraFocus,
+                  keyboardType: extra.key == 'phone' ? TextInputType.phone : null,
+                  autofillHints: extra.key == 'phone'
+                      ? const [AutofillHints.telephoneNumber]
+                      : null,
+                  enabled: !_busy,
+                  errorText: _extraError,
+                  onSubmitted: (_) => _submit(),
+                ),
+              ],
+              const SizedBox(height: 14),
+              RTextField(
+                label: 'Email',
+                icon: Icons.mail_outline,
+                hint: 'you@example.com',
+                controller: _email,
+                focusNode: _emailFocus,
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.email],
+                enabled: !_busy,
+                errorText: _emailError,
+                onSubmitted: (_) => _submit(),
+              ),
+              const SizedBox(height: 14),
+              RTextField(
+                label: 'Password',
+                icon: Icons.lock_outline,
+                hint: 'At least 8 characters',
+                controller: _password,
+                focusNode: _passwordFocus,
+                obscure: true,
+                autofillHints: const [AutofillHints.newPassword],
+                enabled: !_busy,
+                errorText: _passwordError,
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+        RPrimaryButton('Create account', busy: _busy, onPressed: _submit),
+        const SizedBox(height: 18),
+        _FooterLink(
+          prompt: 'Already have an account?',
+          action: 'Log in',
+          onTap: _busy ? null : () => Navigator.of(context).pop(),
+        ),
       ],
-      const SizedBox(height: 14),
-      AuthField(label: 'EMAIL', icon: Icons.mail_outline, placeholder: 'you@example.com', controller: _email, keyboardType: TextInputType.emailAddress),
-      const SizedBox(height: 14),
-      AuthField(label: 'PASSWORD', icon: Icons.lock_outline, placeholder: 'Create a password', controller: _password, password: true),
-      const SizedBox(height: 20),
-      RPrimaryButton(_busy ? 'Creating account…' : 'Create account', onPressed: _busy ? null : _submit),
-      const SizedBox(height: 12),
-      Text('By continuing you agree to our Terms of Service and Privacy Policy.',
-          textAlign: TextAlign.center, style: GoogleFonts.plusJakartaSans(fontSize: 11, color: RColors.inkSoft, height: 1.45)),
-      const SizedBox(height: 18),
-      _FooterLink(prompt: 'Already have an account?', action: 'Log in', onTap: () => Navigator.of(context).pop()),
-    ]);
+    );
   }
 }
 
 // ---- shared pieces --------------------------------------------------------
-void _goHome(BuildContext context, WidgetBuilder home) =>
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: home), (r) => false);
-
-void _error(BuildContext context, String msg) => ScaffoldMessenger.of(context)
-    .showSnackBar(SnackBar(backgroundColor: const Color(0xFF8A2E2E), content: Text(msg)));
-
-void _info(BuildContext context, String msg) =>
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
+/// The scrollable page the auth screens (and other signed-out pages) sit on.
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({super.key, required this.children});
   final List<Widget> children;
@@ -222,130 +408,95 @@ class AuthScaffold extends StatelessWidget {
   }
 }
 
-class _Wordmark extends StatelessWidget {
-  const _Wordmark();
-  @override
-  Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: [
-        Text('redefine', style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w700, color: RColors.tealDeep, letterSpacing: -0.3)),
-        Text('.', style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w700, color: RColors.lime)),
-      ]);
-}
-
 class _Hero extends StatelessWidget {
   const _Hero({required this.persona, required this.title, required this.subtitle});
   final AuthPersona persona;
   final String title, subtitle;
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-        decoration: BoxDecoration(color: persona.pillBg, borderRadius: BorderRadius.circular(999)),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(persona.icon, size: 13, color: persona.pillFg),
-          const SizedBox(width: 6),
-          Text(persona.label, style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: persona.pillFg, letterSpacing: 0.5)),
-        ]),
-      ),
-      const SizedBox(height: 10),
-      Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 28, fontWeight: FontWeight.w700, color: RColors.ink, letterSpacing: -0.5, height: 1.1)),
-      const SizedBox(height: 8),
-      Text(subtitle, style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w500, color: RColors.inkMuted, height: 1.5)),
-    ]);
-  }
-}
-
-class AuthField extends StatefulWidget {
-  const AuthField({super.key, required this.label, required this.icon, required this.placeholder, required this.controller, this.password = false, this.keyboardType});
-  final String label, placeholder;
-  final IconData icon;
-  final TextEditingController controller;
-  final bool password;
-  final TextInputType? keyboardType;
-  @override
-  State<AuthField> createState() => _AuthFieldState();
-}
-
-class _AuthFieldState extends State<AuthField> {
-  bool _show = false;
-  @override
-  Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(widget.label, style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF888888), letterSpacing: 0.5)),
-      const SizedBox(height: 7),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        decoration: BoxDecoration(color: RColors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: RColors.border, width: 0.8)),
-        child: Row(children: [
-          Icon(widget.icon, size: 17, color: RColors.inkSoft),
-          const SizedBox(width: 10),
-          Expanded(child: TextField(
-            controller: widget.controller,
-            obscureText: widget.password && !_show,
-            keyboardType: widget.keyboardType,
-            cursorColor: RColors.teal,
-            style: GoogleFonts.plusJakartaSans(fontSize: 14, color: RColors.ink),
-            decoration: InputDecoration(
-              isCollapsed: true,
-              border: InputBorder.none,
-              hintText: widget.placeholder,
-              hintStyle: GoogleFonts.plusJakartaSans(fontSize: 14, color: RColors.inkSoft),
-            ),
-          )),
-          if (widget.password)
-            GestureDetector(
-              onTap: () => setState(() => _show = !_show),
-              child: Icon(_show ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 17, color: RColors.inkSoft),
-            ),
-        ]),
-      ),
-    ]);
-  }
-}
-
-class _OrDivider extends StatelessWidget {
-  const _OrDivider();
-  @override
-  Widget build(BuildContext context) => Row(children: [
-        const Expanded(child: Divider(color: RColors.border, thickness: 0.8)),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text('or', style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RColors.inkSoft))),
-        const Expanded(child: Divider(color: RColors.border, thickness: 0.8)),
-      ]);
-}
-
-class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.onTap});
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: double.infinity,
-        child: OutlinedButton(
-          onPressed: onTap,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: RColors.ink,
-            side: const BorderSide(color: RColors.border, width: 0.8),
-            padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+          decoration: BoxDecoration(
+            color: persona.pillBg,
+            borderRadius: BorderRadius.circular(999),
           ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Text('G', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF4285F4))),
-            const SizedBox(width: 10),
-            Text('Continue with Google', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w600, color: RColors.ink)),
-          ]),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(persona.icon, size: 13, color: persona.pillFg),
+              const SizedBox(width: 6),
+              Text(
+                persona.label,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: persona.pillFg,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
         ),
-      );
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: RColors.ink,
+            letterSpacing: -0.5,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          subtitle,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: RColors.inkMuted,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _FooterLink extends StatelessWidget {
   const _FooterLink({required this.prompt, required this.action, required this.onTap});
   final String prompt, action;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) => Center(
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(prompt, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w500, color: RColors.inkMuted)),
-          const SizedBox(width: 4),
-          GestureDetector(onTap: onTap, child: Text(action, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: RColors.tealDeep))),
-        ]),
-      );
+    // Wraps rather than overflows on a narrow window or with large text.
+    child: Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text(
+          prompt,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: RColors.inkMuted,
+          ),
+        ),
+        TextButton(
+          onPressed: onTap,
+          style: TextButton.styleFrom(
+            foregroundColor: RColors.tealDeep,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            minimumSize: const Size(0, 32),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+          child: Text(action),
+        ),
+      ],
+    ),
+  );
 }
